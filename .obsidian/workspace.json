@@ -31,10 +31,14 @@
             "id": "df37f816451f2dce",
             "type": "leaf",
             "state": {
-              "type": "graph",
-              "state": {},
-              "icon": "lucide-git-fork",
-              "title": "Graph view"
+              "type": "markdown",
+              "state": {
+                "file": "Templates/Person.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Person"
             }
           }
         ]
@@ -199,8 +203,11 @@
       "bases:Create new base": false
     }
   },
-  "active": "8ba08942f80bd4a3",
+  "active": "df37f816451f2dce",
   "lastOpenFiles": [
+    "People/Eric Taylor.md",
+    "People/Andrea Bierly.md",
+    "Daily/2026-04-07.md",
     "People/Matt H.md.tmp.2336.1775584971742",
     "Welcome.md",
     "Daily",

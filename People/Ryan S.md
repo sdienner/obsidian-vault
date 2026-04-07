@@ -17,6 +17,9 @@ tags: [person, direct-report, p3, evaluation]
 ## Growth Areas
 - People/coordination (P3 level — primarily mentoring)
 
+## Active Work (as of 2026-04-07)
+- **Deployment in progress** — packaging up build, targeting ~4pm completion; Eric Taylor (QA) waiting on timeline to prep team for testing. Ryan noted "it usually does not go well on the first try."
+
 ## 1:1 Log
 <!-- Newest first. Paste the 1-1 Entry template to add entries -->
 

@@ -1,7 +1,9 @@
 {
   "permissions": {
     "allow": [
-      "mcp__claude_ai_Microsoft_365__chat_message_search"
+      "mcp__claude_ai_Microsoft_365__chat_message_search",
+      "Bash(unset VAULT_PATH)",
+      "Bash(bash .claude/hooks/auto-commit.sh \"People/Casey H.md\")"
     ]
   }
 }

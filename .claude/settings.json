@@ -36,7 +36,6 @@
     ]
   },
   "env": {
-    "VAULT_PATH": "${cwd}",
     "DAILY_NOTES_DIR": "Daily",
     "GOALS_DIR": "Goals",
     "PROJECTS_DIR": "Projects",
