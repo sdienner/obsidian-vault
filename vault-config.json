@@ -1,0 +1,20 @@
+{
+  "name": "Scott",
+  "reviewDay": "Monday",
+  "goalAreas": ["Career & Leadership"],
+  "workStyle": "Coaching and challenging",
+  "setupDate": "2026-04-07",
+  "version": "3.1",
+  "adoptedVault": true,
+  "folderMapping": {
+    "dailyNotes": "Daily",
+    "goals": "Goals",
+    "projects": "Projects",
+    "templates": "Templates",
+    "archives": "Archive",
+    "inbox": "Inbox",
+    "meetings": "Meetings",
+    "people": "People",
+    "reviews": "Reviews"
+  }
+}

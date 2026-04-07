@@ -1,0 +1,82 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git:*)",
+      "Bash(ls:*)",
+      "Bash(mkdir:*)",
+      "Bash(date:*)",
+      "Bash(wc:*)",
+      "Bash(find:*)",
+      "Bash(cp:*)",
+      "Bash(mv:*)",
+      "Read(*)",
+      "Write(Daily/**)",
+      "Write(Goals/**)",
+      "Write(Projects/**)",
+      "Write(Archive/**)",
+      "Write(Templates/**)",
+      "Write(Inbox/**)",
+      "Write(Meetings/**)",
+      "Write(People/**)",
+      "Write(Reviews/**)",
+      "Write(.claude/**)",
+      "Edit(Daily/**)",
+      "Edit(Goals/**)",
+      "Edit(Projects/**)",
+      "Edit(Templates/**)",
+      "Edit(Inbox/**)",
+      "Edit(Meetings/**)",
+      "Edit(People/**)",
+      "Edit(Reviews/**)",
+      "Edit(.claude/**)"
+    ],
+    "deny": [
+      "Write(.git/**)",
+      "Bash(rm -rf:*)"
+    ]
+  },
+  "env": {
+    "VAULT_PATH": "${cwd}",
+    "DAILY_NOTES_DIR": "Daily",
+    "GOALS_DIR": "Goals",
+    "PROJECTS_DIR": "Projects",
+    "TEMPLATES_DIR": "Templates",
+    "ARCHIVES_DIR": "Archive",
+    "INBOX_DIR": "Inbox",
+    "GIT_AUTO_COMMIT": "true"
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/session-init.sh"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/skill-discovery.sh",
+            "timeout": 5000
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/auto-commit.sh \"$TOOL_INPUT_FILE_PATH\""
+          }
+        ]
+      }
+    ]
+  }
+}
