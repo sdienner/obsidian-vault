@@ -17,8 +17,8 @@ if [ ! -d .git ]; then
     exit 0
 fi
 
-# Check if there are changes to commit
-if git diff --quiet && git diff --staged --quiet; then
+# Check if there are changes to commit (tracked modifications, staged changes, or new untracked files)
+if [ -z "$(git status --porcelain)" ]; then
     exit 0
 fi
 
