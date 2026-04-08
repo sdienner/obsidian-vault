@@ -34,8 +34,9 @@ tags: [review, h2-2025, tracker]
 
 ## Delivery Status
 
-- **Keith & Tom** — drafts complete, not yet delivered
-- **Ryan** — draft complete, peer feedback not yet collected
+- **Keith** — delivered ✓
+- **Tom** — draft complete, delivery meeting pending
+- **Ryan** — draft complete, delivery meeting pending; P3→P4 evaluation complete
 - **Everyone else** — drafts not started
 
 ## Engineering Ladder
