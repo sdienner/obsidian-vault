@@ -20,7 +20,7 @@ This vault supports professional effectiveness and leadership work:
 |--------|---------|
 | `Daily/` | Daily notes (`YYYY-MM-DD.md`) |
 | `Goals/` | Goal cascade — 3-year vision → yearly → monthly → weekly |
-| `Projects/` | Active project notes |
+| `Projects/` | Project folders containing project context and notes |
 | `People/` | Direct reports and stakeholder profiles |
 | `Meetings/` | Meeting notes |
 | `Reviews/` | Trackers and review documents |
@@ -58,7 +58,7 @@ Daily Notes (Daily/YYYY-MM-DD.md)
 
 - Weekly review day: **Monday**
 - Daily notes: `Daily/YYYY-MM-DD.md`
-- Project notes: one file per project in `Projects/`
+- Projects: each project lives in `Projects/<Project Name>/` with a `CLAUDE.md`; some projects also include a primary note named `<Project Name>.md`
 - Person notes: one file per person in `People/`
 - Meeting notes: `Meetings/YYYY-MM-DD Topic.md`
 - Templates: `Templates/` — use as starting points, not strict rules
