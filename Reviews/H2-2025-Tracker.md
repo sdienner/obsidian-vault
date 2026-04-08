@@ -9,7 +9,7 @@ tags: [review, h2-2025, tracker]
 
 | Report | Work Summary | Draft Written | Delivered | Review File |
 |--------|:-----------:|:-------------:|:---------:|-------------|
-| [[Keith M]] | [x] | [x] | [ ] | [[Keith M - H2 2025 Performance Review]] |
+| [[Keith M]] | [x] | [x] | [x] | [[Keith M - H2 2025 Performance Review]] |
 | [[Tom G]] | [x] | [x] | [ ] | [[Tom G - H2 2025 Performance Review]] |
 | [[Ryan S]] | [x] | [x] | [ ] | [[Ryan S - H2 2025 Performance Review]] |
 | [[Tony B]] | [x] | [ ] | [ ] | [[Tony B - H2 2025 Performance Review]] |
