@@ -5,26 +5,23 @@ status: active
 # AI Automation
 
 ## Goal
-Internal tools and AI automation / data coalescing for the company.
+Internal AI initiatives — AskHub TAM integration and Malloy/Credible Data semantic layer evaluation for Cargas Energy.
 
 ## Current Status
-Active. Includes Document Extraction AI (Keith's epic CAR-29160), AskHub TAM integration.
+Active.
 
-## Related Work
-- **Credible Data/Malloy** — semantic layer evaluation (backlog, 8-16h discovery)
-  - Ed requested evaluation. Aaron pro, Fred anti, Ed middle.
-  - Recommendation: embedded in customer stack
+## Work Items
+
+- **AskHub TAM** — Steph asked about Total Addressable Market info. Waiting on Steph for follow-up.
+- **Credible Data/Malloy** — semantic layer evaluation for Cargas Energy (backlog, 8-16h discovery)
+  - Ed requested. Aaron pro, Fred anti, Ed middle.
+  - Decision: embedded in customer stack (multi-tenant challenge rules out other approaches)
   - Contact: Kyle Nestbit (Credible Data)
-- **AskHub TAM** — Steph asked about Total Addressable Market info. Needs follow-up.
 
 ## Decisions Log
 | Date | Decision | Context |
 |------|----------|---------|
-| 2026-03-31 | Malloy best fit: embedded in customer stack | Multi-tenant challenge (per-customer DBs) rules out per-customer or centralized |
-
-## Links
-- Jira:
-- Repo:
+| 2026-03-31 | Malloy best fit: embedded in customer stack | Multi-tenant challenge (per-customer DBs) |
 
 ## Notes
 - Jonathan B is AI-savvy — potential candidate for Malloy discovery work
