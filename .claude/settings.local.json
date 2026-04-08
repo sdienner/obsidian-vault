@@ -17,7 +17,8 @@
       "mcp__beb4449d-076c-4772-86fc-69dcb546d07e__getJiraIssue",
       "Skill(update-config)",
       "Skill(update-config:*)",
-      "Bash(cd D:/repos/CargasEnergy.worktrees/deltas:*)"
+      "Bash(cd D:/repos/CargasEnergy.worktrees/deltas:*)",
+      "Bash(cerelease create-delta:*)"
     ]
   }
 }
