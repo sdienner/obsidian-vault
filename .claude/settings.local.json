@@ -4,7 +4,11 @@
       "mcp__claude_ai_Microsoft_365__chat_message_search",
       "Bash(unset VAULT_PATH)",
       "Bash(bash .claude/hooks/auto-commit.sh \"People/Casey H.md\")",
-      "Bash(bash .claude/hooks/auto-commit.sh \"Reviews/Product SE Role Progression Framework.md\")"
+      "Bash(bash .claude/hooks/auto-commit.sh \"Reviews/Product SE Role Progression Framework.md\")",
+      "Bash(for f:*)",
+      "Bash(do echo:*)",
+      "Read(//d/repos/obsidian-vault/**)",
+      "Bash(done)"
     ]
   }
 }

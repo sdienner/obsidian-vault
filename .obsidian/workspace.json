@@ -33,12 +33,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Reviews/H2-2025-Tracker.md",
+                "file": "Reviews/Ryan S - H2 2025 Performance Review.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "H2-2025-Tracker"
+              "title": "Ryan S - H2 2025 Performance Review"
             }
           }
         ]
@@ -205,6 +205,9 @@
   },
   "active": "df37f816451f2dce",
   "lastOpenFiles": [
+    "Daily/2026-04-07.md",
+    "Reviews/Ryan S - H2 2025 Performance Review.md",
+    "Reviews/H2-2025-Tracker.md",
     "Templates/Person.md",
     "People/Ryan S.md.tmp.30264.1775591551499",
     "People/Ryan S.md.tmp.30264.1775591542725",
@@ -214,7 +217,6 @@
     "Reviews/Product SE Role Progression Framework.md.tmp.30264.1775590467472",
     "People/Eric Taylor.md",
     "People/Andrea Bierly.md",
-    "Daily/2026-04-07.md",
     "People/Matt H.md.tmp.2336.1775584971742",
     "Welcome.md",
     "Daily",
@@ -223,7 +225,6 @@
     "Projects/CI-CD.md",
     "Projects/AI Automation.md",
     "Projects",
-    "Reviews/H2-2025-Tracker.md",
     "People/Casey H.md",
     "People/Devin S.md",
     "People/Ryan S.md",

@@ -34,7 +34,7 @@ Ryan has earned a level of technical respect on the team that is meaningful at h
 
 ### 3. Release Ownership and Operational Reliability
 
-Ryan owns the release process in a way that goes beyond just executing builds. He leads release retros, takes accountability when things go wrong, and manages deployments with a realistic and transparent approach to risk. His self-awareness in managing expectations with QA during complex deployments reflects the kind of professional judgment the team depends on.
+Ryan owns the release process in a way that goes beyond just executing builds. He leads release retros, takes accountability when things go wrong, and manages deployments with a realistic and transparent approach to risk. His self-awareness in managing expectations with QA during complex releases and builds reflects the kind of professional judgment the team depends on.
 
 ---
 
@@ -54,14 +54,14 @@ To make a credible case for P4, Ryan needs to start actively developing the engi
 
 Ryan is a strong P3 who is starting to exhibit P4 behaviors in pockets. Here is where things stand across the six competency areas:
 
-| Competency | Assessment |
-|------------|------------|
-| Technical Execution & Quality | Trending P4 — deep technical capability, needs to confirm he's setting the standard |
-| Industry & Product Acumen | Trending P4 — actively shaping features in discovery |
-| Engineering & System Design | P3-P4 — cross-module work is there; large-scale design leadership is emerging |
-| Leadership & Influence | P3 — coaching and investment in others is the clearest gap |
-| Operational Excellence | P3 — ideas without follow-through; one completed process improvement would change this |
-| Collaboration & Stakeholder | P3 — cross-team and customer-facing impact not yet demonstrated |
+| Competency                    | Assessment                                                                             |
+| ----------------------------- | -------------------------------------------------------------------------------------- |
+| Technical Execution & Quality | Trending P4 — deep technical capability, needs to confirm he's setting the standard    |
+| Industry & Product Acumen     | Trending P4 — actively shaping features in discovery                                   |
+| Engineering & System Design   | P3-P4 — cross-module work is there; large-scale design leadership is emerging          |
+| Leadership & Influence        | P3 — coaching and investment in others is the clearest gap                             |
+| Operational Excellence        | P3 — ideas without follow-through; one completed process improvement would change this |
+| Collaboration & Stakeholder   | P3 — cross-team and customer-facing impact not yet demonstrated                        |
 
 **Recommendation:** Not ready for P4 this cycle, but on a credible path. A strong H1 2026 — specifically one completed process improvement and demonstrated investment in a teammate's development — would make the case.
 
