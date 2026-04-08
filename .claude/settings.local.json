@@ -10,7 +10,14 @@
       "Read(//d/repos/obsidian-vault/**)",
       "Bash(done)",
       "Bash(gh api:*)",
-      "WebFetch(domain:raw.githubusercontent.com)"
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(bash .claude/hooks/skill-discovery.sh)",
+      "Skill(delta-builder)",
+      "Skill(delta-builder:*)",
+      "mcp__beb4449d-076c-4772-86fc-69dcb546d07e__getJiraIssue",
+      "Skill(update-config)",
+      "Skill(update-config:*)",
+      "Bash(cd D:/repos/CargasEnergy.worktrees/deltas:*)"
     ]
   }
 }
