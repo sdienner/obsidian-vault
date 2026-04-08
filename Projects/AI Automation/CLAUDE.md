@@ -1,22 +1,21 @@
 # Project: AI Automation
 
 ## Overview
-Internal tools and AI automation initiatives for Cargas — including document extraction AI, AskHub TAM integration, and semantic data layer evaluation.
+Internal AI initiatives for Cargas — AskHub TAM integration and Malloy/Credible Data semantic layer evaluation for Cargas Energy.
 
 ## Status
 - **Phase:** Active
-- **Progress:** 30%
+- **Progress:** 20%
 - **Started:** 2025
 - **Target:** Ongoing
 
 ## Goals
-- Deliver Document Extraction AI (Keith's epic CAR-29160)
 - Integrate AskHub with Total Addressable Market (TAM) data
-- Evaluate and recommend Malloy/Credible Data semantic layer approach
+- Evaluate Malloy/Credible Data semantic layer in the context of Cargas Energy
 
 ## Current Focus
 - AskHub TAM integration — follow up with Steph on info needed
-- Document Extraction AI (CAR-29160) — Keith's epic, active
+- Malloy evaluation — backlog, needs discovery scoping (8-16h estimate)
 
 ## Key Decisions
 | Date | Decision | Context |
@@ -25,17 +24,16 @@ Internal tools and AI automation initiatives for Cargas — including document e
 
 ## Next Actions
 - [ ] Follow up with Steph on TAM/AskHub info
-- [ ] Progress CAR-29160 with Keith
-- [ ] Confirm Malloy recommendation with Ed (backlog, 8-16h discovery)
+- [ ] Scope and schedule Malloy discovery work (8-16h) — confirm approach with Ed
 
 ## Blockers
 - AskHub TAM: waiting on Steph for info
+- Malloy: needs Ed alignment before discovery can start
 
 ## Resources
-- Jira: CAR-29160 (Document Extraction AI)
 - Contact: Kyle Nestbit (Credible Data / Malloy)
 - **Supports:** [[2. Yearly Goals#Engineering Delivery]]
 - **Related:** [[Code Collective/CLAUDE]]
 
 ## Notes for Claude
-Jonathan B is AI-savvy and a potential candidate for Malloy discovery work. Ed requested the Malloy evaluation — Aaron is pro, Fred is anti, Ed is in the middle. The TAM integration is blocking Steph.
+Ed requested the Malloy evaluation — Aaron is pro, Fred is anti, Ed is in the middle. Jonathan B is AI-savvy and a potential candidate for Malloy discovery work. The TAM integration is blocking Steph. Document Extraction AI (CAR-29160) is Keith's project — not tracked here.
