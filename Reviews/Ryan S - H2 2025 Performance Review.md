@@ -24,29 +24,31 @@ Ryan had a strong H2 2025. He is operating at the top of P3 and showing meaningf
 
 ## Strengths
 
-### 1. Technical Depth and Delivery
+### 1. Release Ownership
 
-Ryan's work on custom forms this half was the clearest example of what he's capable of. It's a technically complex area that required end-to-end ownership — from design through delivery — and he executed it with the quality and independence expected at P3. His broader portfolio this half (Service Dispatch board, Mobile Delivery, performance monitoring, packaging and release work) reflects an engineer who can move across the system without needing to be handed a blueprint. He has mastered the core technology stack and is the person others go to when something is technically hard.
+Ryan continues to take ownership of the release process and helps make sure releases happen efficiently and effectively. His input into what and how things are included, as well as being a driving force behind making them happen, has been appreciated by the team and by QA/Eric.
 
-### 2. Technical Authority and Influence
+### 2. Custom Forms — Early Involvement Pays Off
 
-Ryan has earned a level of technical respect on the team that is meaningful at his level. Engineers and stakeholders seek out his input, and he regularly participates in early feature conversations — shaping what gets built rather than waiting to receive requirements. This upstream presence is one of the clearest P4 signals he's showing. He's no longer just a strong implementer; he's a voice in how problems get framed.
+Ryan's work on Custom Forms is a great example of how being involved early on in the requirements cycle can lead to great results. This feature was up against a time crunch, but we picked a great third-party solution to help get it integrated and Ryan executed this very well with lots of good input from other members of the Service Squad.
 
-### 3. Release Ownership and Operational Reliability
+### 3. Technical Authority and Reputation
 
-Ryan owns the release process in a way that goes beyond just executing builds. He leads release retros, takes accountability when things go wrong, and manages deployments with a realistic and transparent approach to risk. His self-awareness in managing expectations with QA during complex releases and builds reflects the kind of professional judgment the team depends on.
+Ryan is actively sought out as an engineering resource, primarily with things related to service, but he is also knowledgeable in several other areas that we rely on — especially with things related to performance (dispatch data rewrite and performance monitor) and his input and contributions in streamlining the recent release retros.
+
+Ryan is highly respected on the dev team, by his peers on the product team, by stakeholders, and by those he interacts with through channels such as GPS.
 
 ---
 
-## Areas for Improvement
+## H1 2026 Performance Plan
 
-### 1. Turning Good Ideas into Process Change
+### 1. Own a Process Improvement End-to-End
 
-Ryan has thought carefully about how to improve releases, packaging, and git workflows — the ideas are real and worth pursuing. The gap is follow-through. At P3, contributing to process improvement means more than identifying what could be better; it means driving the change from idea to implementation. The expectation going into H1 2026 is that Ryan picks one of these ideas and owns it end-to-end: proposes it, gets alignment, implements it, and measures whether it worked.
+Over the years, Ryan and I have brainstormed on ways to improve the team's processes — whether through packaging, branching, or releases. Part of being promoted to Level 4 should be picking one idea and seeing it through to completion. Ryan should identify a process improvement he believes in, drive it to implementation this half, and we will evaluate the effects together.
 
-### 2. Investing in Others' Growth
+### 2. Intentional Mentoring
 
-To make a credible case for P4, Ryan needs to start actively developing the engineers around him. This doesn't require a formal mentorship program — it means taking the time to walk someone through a hard problem rather than solving it for them, giving substantive feedback in code reviews, and being intentional about transferring what he knows. He has the technical depth to do this well. The question is whether he makes it a priority.
+Being more directly involved in mentoring some of the newer team members is something I'd like to see as part of the jump to Level 4. Ryan should be more intentional about getting involved in mentoring newer developers, giving advice when needed, and ramping up someone like Devin — who enjoys being involved in process improvement and would benefit from Ryan's experience.
 
 ---
 
@@ -54,25 +56,118 @@ To make a credible case for P4, Ryan needs to start actively developing the engi
 
 Ryan is a strong P3 who is starting to exhibit P4 behaviors in pockets. Here is where things stand across the six competency areas:
 
-| Competency                    | Assessment                                                                             |
-| ----------------------------- | -------------------------------------------------------------------------------------- |
-| Technical Execution & Quality | Trending P4 — deep technical capability, needs to confirm he's setting the standard    |
-| Industry & Product Acumen     | Trending P4 — actively shaping features in discovery                                   |
-| Engineering & System Design   | P3-P4 — cross-module work is there; large-scale design leadership is emerging          |
-| Leadership & Influence        | P3 — coaching and investment in others is the clearest gap                             |
-| Operational Excellence        | P3 — ideas without follow-through; one completed process improvement would change this |
-| Collaboration & Stakeholder   | P3 — cross-team and customer-facing impact not yet demonstrated                        |
+| Competency | Assessment |
+|------------|------------|
+| Technical Execution & Quality | Trending P4 — deep technical capability, needs to confirm he's setting the standard |
+| Industry & Product Acumen | Trending P4 — actively shaping features in discovery |
+| Engineering & System Design | P3-P4 — cross-module work is there; large-scale design leadership is emerging |
+| Leadership & Influence | P3 — coaching and investment in others is the clearest gap |
+| Operational Excellence | P3 — ideas without follow-through; one completed process improvement would change this |
+| Collaboration & Stakeholder | P3 — cross-team and customer-facing impact not yet demonstrated |
 
 **Recommendation:** Not ready for P4 this cycle, but on a credible path. A strong H1 2026 — specifically one completed process improvement and demonstrated investment in a teammate's development — would make the case.
 
 ---
 
-## Looking Ahead — H1 2026 Focus Areas
+## Competency Detail
 
-1. **Own one process improvement end-to-end** — pick a release or packaging improvement, drive it to completion
-2. **Start actively coaching** — identify one engineer to invest in; make it visible
-3. **Document discovery contributions** — when technical input shapes a feature, note it; this evidence matters for the next review
+### 1. Technical Execution & Quality
+
+| Level | Criteria |
+|-------|----------|
+| P3 | Mastered all important technologies; mastered at least one well enough to mentor others. Implements complex features with focus on quality, scalability, maintainability. Improves codebase health through refactoring and mentoring on best practices. |
+| P4 | Mastered entire technology stack. Resolves the most complex issues including difficult performance problems. Sets the standard for technical excellence and code quality on the team. |
+
+**Evidence:**
+- Custom forms, releases, packaging, performance monitoring work
+- Dispatch data rewrite, performance monitor
+- *Gap: Is Ryan resolving the hardest performance/technical issues on the team? Does he set the quality standard others follow?*
 
 ---
 
-*Draft as of 2026-04-07. Pending peer feedback collection before delivery.*
+### 2. Industry & Product Acumen
+
+| Level | Criteria |
+|-------|----------|
+| P3 | Understands how multiple parts of the product integrate to meet broader business goals. Collaborates with PMs to translate ambiguous requirements into technical solutions. |
+| P4 | Fully comprehends business architecture and customer workflows across many modules. Provides invaluable technical insights during discovery that shape feature definitions. |
+
+**Evidence:**
+- Full architecture understanding noted
+- Involved in early feature conversations — Custom Forms is a direct example of early requirements involvement shaping the outcome
+- *Gap: More examples of technical feedback during discovery that changed a feature's direction or scope*
+
+---
+
+### 3. Engineering & System Design
+
+| Level | Criteria |
+|-------|----------|
+| P3 | Designs and implements features that may span multiple system modules. |
+| P4 | Leads technical design of large-scale projects. Can predict how changes impact the entire system. Builds robust and expansible systems while balancing go-to-market timing constraints. |
+
+**Evidence:**
+- Service Dispatch board, Mobile Delivery — cross-module work
+- Custom Forms — third-party integration decision made under time pressure
+- *Gap: Evidence of predicting system-wide impact of changes and leading large-scale technical designs*
+
+---
+
+### 4. Leadership & Influence
+
+| Level | Criteria |
+|-------|----------|
+| P3 | Assists and advises other engineers to accelerate their career growth. Makes an impact on engineering and support teams through specialized knowledge and positive attitude. |
+| P4 | Coaches team members on complex projects, moderates technical discussions, provides effective feedback guiding team to successful outcomes. Actively invests in career growth, performance, and well-being of teammates. |
+
+**Evidence:**
+- Leads release retros, owns release issues
+- Streamlined recent release retros — contributed process improvement in this area
+- Coaching has not been a meaningful part of his role yet
+- *Gap: Intentional mentoring is a stated expectation for H1 2026 — Devin is a natural starting point*
+
+---
+
+### 5. Operational Excellence
+
+| Level | Criteria |
+|-------|----------|
+| P3 | Contributes to and improves existing processes (automating workflows, improving release management). Takes ownership of complex problems outside their specialty. Assists support in difficult situations with practical solutions. |
+| P4 | Suggests new team processes based on feedback and guides the team through change management. Leads response to critical production incidents and performance rescue situations. |
+
+**Evidence:**
+- Leads release retros — owns release issues and process
+- Has good ideas around improving releases, packaging, and git workflows
+- *Gap: Ideas have not been driven to implementation — this is the primary H1 2026 expectation*
+
+---
+
+### 6. Collaboration & Stakeholder Relationships
+
+| Level | Criteria |
+|-------|----------|
+| P3 | Works with PMs to provide technical designs and reasonable estimates independently. Provides critical technical feedback during discovery to shape feature trajectory. |
+| P4 | Makes an impact beyond immediate team — frequently collaborates with PM, design, and support. Interacts directly with customers when escalated; instills confidence through rational, empathetic, clear communication. |
+
+**Evidence:**
+- Respected by peers on the product team, stakeholders, and GPS channel interactions
+- *Gap: More evidence needed of direct cross-team impact and customer-facing escalations*
+
+---
+
+## H2 2025 Time Summary
+
+| Category | Hours |
+|----------|-------|
+| Features | 195.0h |
+| Meetings | 191.0h |
+| Discovery | 157.0h |
+| Vacation/PTO | 146.0h |
+| Bugs | 72.0h |
+| Helping Support | 69.0h |
+| Packaging Releases | 57.0h |
+| Back and Forth with QA | 49.0h |
+| **Total** | **1,040.0h** |
+
+## Performance Reviews
+- [[H2-2025-Tracker]]
