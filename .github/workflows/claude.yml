@@ -50,28 +50,33 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Setup Claude Code
+      - name: Process Issue Content
         uses: anthropics/claude-code-action@v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          prompt: |
+            REPO: ${{ github.repository }}
+            ISSUE NUMBER: ${{ github.event.issue.number }}
+            ISSUE TITLE: ${{ github.event.issue.title }}
+            ISSUE BODY: ${{ github.event.issue.body }}
+            ISSUE LABELS: ${{ join(github.event.issue.labels.*.name, ', ') }}
+
+            Read the repository CLAUDE.md instructions first.
+
+            If this issue has the `task` label, add it to today's daily note.
+            If this issue has the `idea` label, capture it in the most appropriate
+            project or note in the vault.
+            If neither label applies, make no file changes.
+
+            Make only the minimal vault changes required and do not modify unrelated files.
           claude_args: |
             --model ${{ env.CLAUDE_MODEL }}
-
-      - name: Process Issue Content
-        run: |
-          ISSUE_TITLE="${{ github.event.issue.title }}"
-          ISSUE_BODY="${{ github.event.issue.body }}"
-          ISSUE_NUMBER="${{ github.event.issue.number }}"
-
-          if [[ "${{ contains(github.event.issue.labels.*.name, 'task') }}" == "true" ]]; then
-            claude code --model "$CLAUDE_MODEL" "Add this task to today's daily note: $ISSUE_TITLE - $ISSUE_BODY"
-          elif [[ "${{ contains(github.event.issue.labels.*.name, 'idea') }}" == "true" ]]; then
-            claude code --model "$CLAUDE_MODEL" "Capture this idea in the appropriate project or notes: $ISSUE_TITLE - $ISSUE_BODY"
-          fi
-
-          gh issue comment $ISSUE_NUMBER --body "✅ Processed by Claude Code and added to vault"
         env:
           CLAUDE_MODEL: ${{ env.CLAUDE_MODEL }}
+
+      - name: Comment on Processed Issue
+        run: gh issue comment ${{ github.event.issue.number }} --body "✅ Processed by Claude Code and added to vault"
+        env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Commit Changes
@@ -96,17 +101,22 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Setup Claude Code
+      - name: Create Daily Note
         uses: anthropics/claude-code-action@v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          prompt: |
+            REPO: ${{ github.repository }}
+            TIME ZONE: ${{ env.TZ }}
+
+            Read the repository CLAUDE.md instructions first.
+            Then create or update today's daily note in the `Daily/` folder using the
+            current runner date in the configured time zone.
+
+            Follow the vault's daily note conventions and templates where appropriate.
+            Make only the minimal changes needed for today's note.
           claude_args: |
             --model ${{ env.CLAUDE_MODEL }}
-
-      - name: Create Daily Note
-        run: |
-          claude code --model "$CLAUDE_MODEL" /onboard
-          claude code --model "$CLAUDE_MODEL" /daily
         env:
           CLAUDE_MODEL: ${{ env.CLAUDE_MODEL }}
 
@@ -133,18 +143,24 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Setup Claude Code
+      - name: Run Weekly Review
         uses: anthropics/claude-code-action@v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          prompt: |
+            REPO: ${{ github.repository }}
+            TIME ZONE: ${{ env.TZ }}
+
+            Read the repository CLAUDE.md instructions first.
+            Perform the weekly review workflow for this Obsidian vault and update the
+            relevant notes in place.
+
+            Create a concise summary of this week's accomplishments and next week's
+            priorities in the appropriate weekly review note.
+
+            Make only the minimal required vault changes.
           claude_args: |
             --model ${{ env.CLAUDE_MODEL }}
-
-      - name: Run Weekly Review
-        run: |
-          claude code --model "$CLAUDE_MODEL" /onboard all
-          claude code --model "$CLAUDE_MODEL" /weekly
-          claude code --model "$CLAUDE_MODEL" "Create a summary of this week's accomplishments and next week's priorities"
         env:
           CLAUDE_MODEL: ${{ env.CLAUDE_MODEL }}
 
@@ -169,19 +185,20 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha }}
 
-      - name: Setup Claude Code
+      - name: Review Changes
         uses: anthropics/claude-code-action@v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          prompt: |
+            REPO: ${{ github.repository }}
+            PR NUMBER: ${{ github.event.pull_request.number }}
+
+            Review this pull request and provide concise, actionable feedback focused
+            on correctness, maintainability, and risk.
+
+            Post the review summary as a pull request comment.
+            Do not modify repository files.
           claude_args: |
             --model ${{ env.CLAUDE_MODEL }}
-
-      - name: Review Changes
-        run: |
-          CHANGED_FILES=$(git diff --name-only origin/main..HEAD)
-          claude code --model "$CLAUDE_MODEL" "Review these changed files and provide feedback: $CHANGED_FILES"
-          gh pr comment ${{ github.event.pull_request.number }} \
-            --body "$(claude code --model \"$CLAUDE_MODEL\" 'Summarize your review findings')"
         env:
           CLAUDE_MODEL: ${{ env.CLAUDE_MODEL }}
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
