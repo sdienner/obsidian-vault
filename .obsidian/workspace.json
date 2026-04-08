@@ -33,12 +33,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Templates/Person.md",
+                "file": "Reviews/H2-2025-Tracker.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Person"
+              "title": "H2-2025-Tracker"
             }
           }
         ]
@@ -205,6 +205,11 @@
   },
   "active": "df37f816451f2dce",
   "lastOpenFiles": [
+    "Templates/Person.md",
+    "People/Ryan S.md.tmp.30264.1775591551499",
+    "People/Ryan S.md.tmp.30264.1775591542725",
+    "People/Ryan S.md.tmp.30264.1775591537324",
+    "People/Ryan S.md.tmp.30264.1775591531720",
     "Reviews/Product SE Role Progression Framework.md",
     "Reviews/Product SE Role Progression Framework.md.tmp.30264.1775590467472",
     "People/Eric Taylor.md",
@@ -219,7 +224,6 @@
     "Projects/AI Automation.md",
     "Projects",
     "Reviews/H2-2025-Tracker.md",
-    "Reviews",
     "People/Casey H.md",
     "People/Devin S.md",
     "People/Ryan S.md",
@@ -231,15 +235,10 @@
     "People/Justin M.md",
     "People/Anne N.md",
     "People/Matt H.md",
-    "People",
     "Home.md",
     "Templates/Review Draft.md",
     "Templates/Project.md",
-    "Templates/Person.md",
     "Templates/Meeting Note.md",
-    "Templates/1-1 Entry.md",
-    "Templates/Daily Note.md",
-    "Templates",
-    "desktop.ini"
+    "Templates/1-1 Entry.md"
   ]
 }
