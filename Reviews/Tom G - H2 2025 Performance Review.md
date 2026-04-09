@@ -121,3 +121,13 @@ Routes through PMs rather than building direct relationships with support and ot
 ---
 
 *Imported from D:/repos/2025 H2 Performance Reviews/tom/tom-groff-2025-h2.md*
+
+---
+
+## Delivery Meeting Notes — 2026-04-09
+
+- **Job leveling:** Tom is curious why he's not in the engineering ladder setup. Not a concern, just genuine curiosity. Worth a quick explanation.
+- **Engineering ladders:** Tom questioned why Scott did the ladders at all — Scott acknowledged it wasn't well thought out on his end. Going forward, gathering broader team feedback before shaping something like this would serve Tom better.
+- **Manager candidates (Tom's observations):**
+  - *Ryan:* Could be a good manager, but he's remote and potentially abrasive
+  - *Tony:* Also potentially abrasive; puts on an apathetic demeanor but holds strong opinions and can come on a little strong
