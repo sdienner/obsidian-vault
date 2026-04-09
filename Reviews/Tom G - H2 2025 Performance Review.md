@@ -1,7 +1,7 @@
 ---
 date: 2026-03-31
 tags: [review, h2-2025, direct-report]
-status: draft
+status: submitted
 person: "[[Tom G]]"
 period: H2 2025
 level-current: P3
@@ -62,13 +62,14 @@ Deep expertise in API module, Cargas Query, and payment systems/security (Basis 
 
 ## Competency Ratings (5-Axis Framework)
 
-| Axis | Level | Score | Evidence |
-|------|-------|-------|----------|
-| Technology | Creates | 5/5 | Designs new architectural patterns (modularization), introduces new payment technologies |
-| System | Evolves | 4/5 | Cargas Pay modularization evolves architecture |
-| People | Mentors | 3/5 | Supports team; explains technical concepts to non-technical stakeholders; some frustration visible |
-| Operational Excellence | Stabilizes | 2/5 | Proactively monitors high-priority customers; but mostly reactive not strategic |
-| Influence | Company | 4/5 | Cargas Pay is strategic company-wide; respected leader; cross-functional |
+| Axis                   | Level      | Score | Evidence                                                                                           |
+| ---------------------- | ---------- | ----- | -------------------------------------------------------------------------------------------------- |
+| Technology             | Creates    | 5/5   | Designs new architectural patterns (modularization), introduces new payment technologies           |
+| System                 | Evolves    | 4/5   | Cargas Pay modularization evolves architecture                                                     |
+| People                 | Mentors    | 3/5   | Supports team; explains technical concepts to non-technical stakeholders; some frustration visible |
+| Operational Excellence | Stabilizes | 2/5   | Proactively monitors high-priority customers; but mostly reactive not strategic                    |
+| Influence              | Company    | 4/5   | Cargas Pay is strategic company-wide; respected leader; cross-functional                           |
+|                        |            |       |                                                                                                    |
 
 ---
 

@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Projects/Release Automation/CargasEnergy-Automated-Release-Process.md",
-                "mode": "source",
+                "file": "Reviews/Tom G - H2 2025 Performance Review.md",
+                "mode": "preview",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "CargasEnergy-Automated-Release-Process"
+              "title": "Tom G - H2 2025 Performance Review"
             }
           }
         ]
@@ -78,7 +78,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 300,
+    "collapsed": true
   },
   "right": {
     "id": "c5d3cc8997ae6e58",
@@ -185,9 +186,9 @@
   },
   "active": "8ba08942f80bd4a3",
   "lastOpenFiles": [
+    "Projects/Release Automation/CargasEnergy-Automated-Release-Process.md",
     "Daily/2026-04-09.md",
     "Projects/Release Automation/CLAUDE.md",
-    "Projects/Release Automation/CargasEnergy-Automated-Release-Process.md",
     "Projects/Release Automation",
     "Goals/1. 3-Year Vision.md",
     "Projects/MyFuelPortal/CLAUDE.md",
