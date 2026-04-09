@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Daily/2026-04-09.md",
+                "file": "Projects/Release Automation/CargasEnergy-Automated-Release-Process.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "2026-04-09"
+              "title": "CargasEnergy-Automated-Release-Process"
             }
           }
         ]
@@ -185,6 +185,8 @@
   },
   "active": "8ba08942f80bd4a3",
   "lastOpenFiles": [
+    "Daily/2026-04-09.md",
+    "Projects/Release Automation/CLAUDE.md",
     "Projects/Release Automation/CargasEnergy-Automated-Release-Process.md",
     "Projects/Release Automation",
     "Goals/1. 3-Year Vision.md",
@@ -192,7 +194,6 @@
     "Projects/MyFuelPortal",
     "Projects/Deltas/CLAUDE.md",
     "Projects/Deltas",
-    "Daily/2026-04-09.md",
     "Projects/Code Collective/Code Collective.md",
     "Projects/Code Collective/CLAUDE.md",
     "Projects/Code Collective",
@@ -219,7 +220,6 @@
     "Reviews/Nate K - H2 2025 Performance Review.md",
     "Reviews/Nate K - H2 2025 Performance Review.md.tmp.66556.1775613917046",
     "Reviews/Tony B - H2 2025 Performance Review.md",
-    "Reviews/Jonathan B - H2 2025 Performance Review.md",
-    "Reviews/Tom G - H2 2025 Performance Review.md"
+    "Reviews/Jonathan B - H2 2025 Performance Review.md"
   ]
 }
