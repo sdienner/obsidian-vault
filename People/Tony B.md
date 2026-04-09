@@ -23,6 +23,9 @@ tags: [person, direct-report]
 ## Feedback Log
 <!-- Capture specific examples as they happen — these feed perf reviews -->
 
+### Manager Potential
+- **Tom G (2026-04-09):** Potentially abrasive; puts on an apathetic demeanor but holds strong opinions and can come on a little strong
+
 ## H2 2025 Review
 Partial.
 
