@@ -63,6 +63,12 @@ Daily Notes (Daily/YYYY-MM-DD.md)
 - Meeting notes: `Meetings/YYYY-MM-DD Topic.md`
 - Templates: `Templates/` — use as starting points, not strict rules
 
+## Jira Integration
+
+When a `CAR-*` issue number is mentioned, use the `getJiraIssue` tool to fetch full context.
+- **Cloud ID:** `cargasenergy.atlassian.net`
+- Use `responseContentFormat: markdown` for readability
+
 ## Private Preferences
 
 See `CLAUDE.local.md` (not committed to git) for any private overrides.
