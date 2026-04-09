@@ -31,6 +31,9 @@ tags: [person, direct-report, p3, evaluation]
 ## Feedback Log
 <!-- Capture specific examples as they happen — these feed perf reviews -->
 
+### Manager Potential
+- **Tom G (2026-04-09):** Could be a good manager, but being remote is a consideration, and Tom flagged that he can be potentially abrasive
+
 ## P3 to P4 Evaluation — In Progress
 
 **H2 2025 Time:** 1,040h total — Features 195h, Meetings 191h, Discovery 157h
