@@ -23,7 +23,9 @@
       "mcp__9b22bf0d-9a84-429c-a81c-90c5568d3774__outlook_calendar_search",
       "mcp__9b22bf0d-9a84-429c-a81c-90c5568d3774__sharepoint_search",
       "mcp__9b22bf0d-9a84-429c-a81c-90c5568d3774__sharepoint_folder_search",
-      "mcp__9b22bf0d-9a84-429c-a81c-90c5568d3774__read_resource"
+      "mcp__9b22bf0d-9a84-429c-a81c-90c5568d3774__read_resource",
+      "Skill(daily)",
+      "Skill(daily:*)"
     ]
   }
 }
