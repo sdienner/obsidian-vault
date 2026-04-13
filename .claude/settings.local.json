@@ -20,7 +20,10 @@
       "Bash(cd D:/repos/CargasEnergy.worktrees/deltas:*)",
       "Bash(cerelease create-delta:*)",
       "mcp__9b22bf0d-9a84-429c-a81c-90c5568d3774__chat_message_search",
-      "mcp__9b22bf0d-9a84-429c-a81c-90c5568d3774__outlook_calendar_search"
+      "mcp__9b22bf0d-9a84-429c-a81c-90c5568d3774__outlook_calendar_search",
+      "mcp__9b22bf0d-9a84-429c-a81c-90c5568d3774__sharepoint_search",
+      "mcp__9b22bf0d-9a84-429c-a81c-90c5568d3774__sharepoint_folder_search",
+      "mcp__9b22bf0d-9a84-429c-a81c-90c5568d3774__read_resource"
     ]
   }
 }
