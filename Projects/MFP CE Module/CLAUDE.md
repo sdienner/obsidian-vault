@@ -54,7 +54,7 @@ Likely **DB-only or mostly DB** — the new endpoints are stored procs under the
 - [ ] Design the MFP API key schema — tables, procs for create/read/validate, designation flag, constraints preventing re-designation of existing keys
 - [ ] Design the CE→MFP endpoint — what does CE need to call on the MFP side, and how does the MFP API key authorize it?
 - [ ] Spec out the MFP schema objects (stored procs, tables) that ship in the module
-- [ ] Create new C# project in CargasEnergy following CargasPay pattern (for the CE→MFP endpoint web component)
+- [ ] Determine if a C# project is needed or if DB-only (stored procs under MFP schema) is sufficient
 - [ ] Generate a new GUID for the module
 - [ ] Add module entry to `module.json` with `name`, `guid`, `web`, `db` lists
 - [ ] Register module GUID in `Util_TableValues` (`cModules`)
