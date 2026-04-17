@@ -97,6 +97,34 @@ cd D:/repos/CargasEnergy.worktrees/deltas && git push origin dfb/CAR-XXXXX
 
 #### Repeat for each issue in the release plan.
 
+#### Special case: fix already in a previous delta for some versions
+
+Sometimes a fix needs to go into a new delta, but some versions already have prior deltas that contain related changes. In this case, branching from the release branch would **miss** those prior delta commits. Instead:
+
+1. **For versions with prior deltas** — branch the dfb off the **latest existing delta branch** for that version (not the release branch), then cherry-pick the fix commits. Use a version-specific branch name to distinguish it:
+   ```bash
+   cd D:/repos/CargasEnergy.worktrees/deltas && git checkout -b dfb/CAR-XXXXX-2025.01 origin/delta/2025.01-C
+   cd D:/repos/CargasEnergy.worktrees/deltas && git cherry-pick <commit1> <commit2>
+   cd D:/repos/CargasEnergy.worktrees/deltas && git push origin dfb/CAR-XXXXX-2025.01
+   ```
+
+2. **For versions without prior deltas** — use the standard dfb off the release branch:
+   ```bash
+   cd D:/repos/CargasEnergy.worktrees/deltas && git checkout -b dfb/CAR-XXXXX origin/release/2025.03
+   cd D:/repos/CargasEnergy.worktrees/deltas && git cherry-pick <commit1> <commit2>
+   cd D:/repos/CargasEnergy.worktrees/deltas && git push origin dfb/CAR-XXXXX
+   ```
+
+3. **When merging** — run separate `cerelease create-delta` commands, one per dfb branch, each targeting only its own version(s):
+   ```bash
+   # Version-specific dfb branches (each version gets its own command)
+   cd D:/repos/CargasEnergy.worktrees/deltas && cerelease create-delta "2025.01" --createNextDeltaBranches --fixBranch "dfb/CAR-XXXXX-2025.01" --skipDeltaPackageBuild
+   cd D:/repos/CargasEnergy.worktrees/deltas && cerelease create-delta "2025.02" --createNextDeltaBranches --fixBranch "dfb/CAR-XXXXX-2025.02" --skipDeltaPackageBuild
+
+   # Standard dfb branch (covers remaining versions together)
+   cd D:/repos/CargasEnergy.worktrees/deltas && cerelease create-delta "2025.03,2025.04" --createNextDeltaBranches --fixBranch "dfb/CAR-XXXXX" --skipDeltaPackageBuild
+   ```
+
 ### Phase 3: Merge Fix Branches into Delta Branches
 
 Use `cerelease create-delta` to merge each fix branch into the appropriate delta branches.
