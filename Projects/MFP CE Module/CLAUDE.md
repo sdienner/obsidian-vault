@@ -76,4 +76,4 @@ Likely **DB-only or mostly DB** — the new endpoints are stored procs under the
 ## Notes
 The CargasPay module is large (payment UI, gateways, DLL, webpack). The MFP module will be narrower but does need a web component for the CE→MFP callback endpoint. The key design constraint: MFP API keys are a new, distinct designation — not a flag you can set on an existing key. This needs to be enforced at the data layer (probably a separate table or a non-nullable type column set only at creation time).
 
-The interesting architectural question here is the direction of calls: typically MFP calls CE, but this module also enables CE to call MFP — which is a new pattern worth thinking through carefully (auth, error handling, what triggers the call).
+Call direction is always MFP → CE. The MFP API key is how MFP authenticates against the new MFP-specific CE endpoints — it's a scoping mechanism, not a new call pattern.
