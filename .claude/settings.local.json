@@ -25,7 +25,11 @@
       "mcp__9b22bf0d-9a84-429c-a81c-90c5568d3774__sharepoint_folder_search",
       "mcp__9b22bf0d-9a84-429c-a81c-90c5568d3774__read_resource",
       "Skill(daily)",
-      "Skill(daily:*)"
+      "Skill(daily:*)",
+      "Read(//d/repos//**)",
+      "Read(//c//**)",
+      "Bash(grep -v \"^$\")",
+      "WebFetch(domain:docs.anthropic.com)"
     ]
   }
 }
