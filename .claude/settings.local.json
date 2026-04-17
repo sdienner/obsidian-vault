@@ -29,7 +29,9 @@
       "Read(//d/repos//**)",
       "Read(//c//**)",
       "Bash(grep -v \"^$\")",
-      "WebFetch(domain:docs.anthropic.com)"
+      "WebFetch(domain:docs.anthropic.com)",
+      "Skill(project)",
+      "Skill(project:*)"
     ]
   }
 }
