@@ -51,18 +51,18 @@ Likely **DB + web component** — the CE→MFP endpoint will need a code-side im
 
 ## Next Actions
 - [ ] Explore `D:/repos/Ancillary-Projects/BuildDeployPackage` and `BuildManifest` to understand module packaging pipeline
-- [ ] Audit MFP codebase for all CE API stored proc calls — build the list of what needs to ship in the module
-- [ ] Determine if a web/DLL component is needed or if DB-only is sufficient
-- [ ] Create new C# project in CargasEnergy (if web component needed) following CargasPay pattern
+- [ ] Design the MFP API key schema — tables, procs for create/read/validate, designation flag, constraints preventing re-designation of existing keys
+- [ ] Design the CE→MFP endpoint — what does CE need to call on the MFP side, and how does the MFP API key authorize it?
+- [ ] Spec out the MFP schema objects (stored procs, tables) that ship in the module
+- [ ] Create new C# project in CargasEnergy following CargasPay pattern (for the CE→MFP endpoint web component)
 - [ ] Generate a new GUID for the module
 - [ ] Add module entry to `module.json` with `name`, `guid`, `web`, `db` lists
 - [ ] Register module GUID in `Util_TableValues` (`cModules`)
-- [ ] Write/move stored procs into the module's DB file list
-- [ ] Add `PostDeploymentScript` if needed
-- [ ] Test module deploy against an older CE version to validate it solves the version gap
+- [ ] Add `PostDeploymentScript` if needed (e.g., seed MFP key type records)
+- [ ] Test module deploy against an older CE version
 
 ## Blockers
-- Need to audit MFP→CE API calls before scope is defined
+- Need to define what CE needs to call back into MFP before the endpoint can be designed
 - Need to understand Ancillary-Projects packaging pipeline before build/deploy path is clear
 
 ## Resources
