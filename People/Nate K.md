@@ -14,7 +14,7 @@ tags: [person, direct-report]
 ## Career Development
 - **Goals:**
 - **Growth areas:**
-- **Aspirations:**
+- **Aspirations:** Not interested in leadership (confirmed in H2 2025 review, 2026-04-17)
 
 ## Feedback Log
 <!-- Capture specific examples as they happen — these feed perf reviews -->
