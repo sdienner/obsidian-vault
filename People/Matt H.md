@@ -18,7 +18,7 @@ tags: [person, direct-report, custom-dev]
 ## Career Development
 - **Goals:**
 - **Growth areas:**
-- **Aspirations:**
+- **Aspirations:** Previously expressed interest in leadership track. Voluntarily moved to standard SE role (~April 2026) — unclear if leadership ambitions are still active. Conversation about direction hasn't happened yet; review meeting is the right time to ask "what are you building toward?"
 
 ## Feedback Log
 <!-- Capture specific examples as they happen — these feed perf reviews -->
