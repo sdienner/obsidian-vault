@@ -39,10 +39,10 @@ A new API key designation specifically for MFP. Key design decisions:
 - **Existing API keys cannot be re-designated as MFP API keys** — MFP keys must be created as such from the start
 - The module ships the tables, stored procs, and logic to create and manage MFP API keys
 
-### CE → MFP Endpoint
-CE will include an endpoint that can call MFP APIs using the MFP API key. This gives CE the ability to initiate calls back to MFP in a controlled, key-scoped way — and the MFP API key is what authorizes those calls on the MFP side.
+### MFP-Designated CE Endpoints
+CE exposes new API endpoints (in the MFP schema) that MFP calls. These endpoints require an MFP API key — regular CE API keys are not accepted. MFP calls CE, as always; the MFP API key is simply how those calls are authenticated against the new MFP-specific endpoints.
 
-Likely **DB + web component** — the CE→MFP endpoint will need a code-side implementation (similar to CargasPay's `.asmx` or equivalent), not just DB objects.
+Likely **DB-only or mostly DB** — the new endpoints are stored procs under the MFP schema, called through CE's existing API layer. May not need a new C# project unless there's logic that can't live in SQL.
 
 ## Key Decisions
 | Date | Decision | Context |
