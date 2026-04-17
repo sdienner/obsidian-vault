@@ -26,15 +26,23 @@ Modules are defined in `module.json` at the root of `D:/repos/CargasEnergy`. Eac
 
 **Packaging:** `D:/repos/Ancillary-Projects/BuildDeployPackage` and `BuildManifest` handle module packaging. Need to explore these to understand the build/deploy pipeline for modules.
 
-## What the MFP Module Needs to Contain
+## What the MFP Module Contains
 
-The module should ship whatever stored procedures and APIs MFP calls that are not guaranteed to exist in a customer's CE version. Specifically:
+This module is **entirely new** — it does not backport or re-ship existing CE functionality. Everything in it is written specifically for MFP.
 
-- [ ] Audit: identify all CE API stored procs called by MFP (start with MFP codebase — look for CE API calls)
-- [ ] Determine which of those procs are version-sensitive (added in newer CE releases)
-- [ ] Decide: DB-only module, or does it also need a web/DLL component?
+### MFP API Schema
+A new DB schema scoped exclusively to MFP. Stored procs and objects in this schema are written for MFP's needs and live only in this module — they are not part of base CE.
 
-Likely **DB-only or mostly DB** — MFP primarily talks to CE via stored procs through the API schema. The CargasPay module is a useful reference but is much larger (payment UI, DLL, webpack) — the MFP module will probably be simpler.
+### MFP API Key System
+A new API key designation specifically for MFP. Key design decisions:
+- MFP API keys are created alongside regular CE API keys but flagged as MFP-designated
+- **Existing API keys cannot be re-designated as MFP API keys** — MFP keys must be created as such from the start
+- The module ships the tables, stored procs, and logic to create and manage MFP API keys
+
+### CE → MFP Endpoint
+CE will include an endpoint that can call MFP APIs using the MFP API key. This gives CE the ability to initiate calls back to MFP in a controlled, key-scoped way — and the MFP API key is what authorizes those calls on the MFP side.
+
+Likely **DB + web component** — the CE→MFP endpoint will need a code-side implementation (similar to CargasPay's `.asmx` or equivalent), not just DB objects.
 
 ## Key Decisions
 | Date | Decision | Context |
