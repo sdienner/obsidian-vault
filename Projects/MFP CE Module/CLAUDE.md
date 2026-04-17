@@ -74,4 +74,6 @@ Likely **DB + web component** — the CE→MFP endpoint will need a code-side im
 - **Related:** [[Projects/MyFuelPortal/CLAUDE]]
 
 ## Notes
-The CargasPay module is large (payment UI, gateways, DLL, webpack). The MFP module is likely much narrower — primarily DB schema objects (stored procs, maybe a schema). Start with the audit before assuming scope.
+The CargasPay module is large (payment UI, gateways, DLL, webpack). The MFP module will be narrower but does need a web component for the CE→MFP callback endpoint. The key design constraint: MFP API keys are a new, distinct designation — not a flag you can set on an existing key. This needs to be enforced at the data layer (probably a separate table or a non-nullable type column set only at creation time).
+
+The interesting architectural question here is the direction of calls: typically MFP calls CE, but this module also enables CE to call MFP — which is a new pattern worth thinking through carefully (auth, error handling, what triggers the call).
