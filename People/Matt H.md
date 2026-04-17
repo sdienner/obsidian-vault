@@ -4,9 +4,9 @@ tags: [person, direct-report, custom-dev]
 # Matt Hahn
 
 ## Role & Context
-- **Role:** Software Engineer (Custom Dev/Consulting)
-- **Team:** Custom Development (~85% consulting work)
-- **Current focus:** Custom development projects
+- **Role:** Software Engineer (transitioned from Custom Dev/Consulting ~early April 2026)
+- **Team:** Standard engineering (formerly Custom Development, ~85% consulting work)
+- **Current focus:** New role — applied and got a standard SE position that opened up
 
 ## Key Metrics
 - $77k custom work (2025)
