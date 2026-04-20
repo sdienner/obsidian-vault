@@ -176,7 +176,7 @@ Cross-cutting: API key auth middleware (fixes current anon gap), unified usage l
 - No owner assigned
 - ChromaDB → pgvector requires re-indexing from `D:/repos/CargasCodeIndexer` — non-trivial, confirm approach before Phase 1 ends
 - Agno Workflow → Mastra workflow mapping needs a spike before Phase 2 commit
-- `VECTOR_DISTANCE` Jira similarity uses Azure SQL-specific SQL — needs Node `mssql`/`tedious` driver, not generic ORM
+- Two separate Jira embedding stores: EnergyAgent uses raw `VECTOR_DISTANCE` SQL against `zd-client` DB (`search_similar_content`); EnergyMCP's `jira-semantic-search` uses a separate AI Prisma DB. Must consolidate to one authoritative store before the `searchSimilarJiraIssues` → agent conversion is valid. Raw SQL path needs Node `mssql`/`tedious`, not generic ORM.
 
 ## Resources
 - **Source repos:** `D:/repos/EnergyAgent`, `D:/repos/EnergyMCP`, `D:/repos/CargasAI-API`, `D:/repos/JiraSearchWeb`, `D:/repos/zendesk-cargas-ai`, `D:/repos/EnergyLicenses`, `D:/repos/CargasCodeIndexer`
