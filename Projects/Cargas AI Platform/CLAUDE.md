@@ -73,13 +73,13 @@ Customer: `get-by-id`, `get-by-name`, `correlate-zendesk`, `get-data` (deploymen
 
 ## Azure Functions Inventory (CargasAI-API — 34 total)
 
-**AI / Core (6 — complex, ~80% of migration risk)**
-- `answerKBQuestion` — 2-stage LLM chain: keyword gen → KB search → GPT answer
-- `getTicketSummary` — parallel Zendesk fetch + GPT-4o-mini formatting
-- `findSimilarTickets` — multi-hop Zendesk search + parallel LLM expansion
-- `searchSimilarJiraIssues` — raw Azure SQL `VECTOR_DISTANCE` cosine math (⚠️ Azure SQL-specific, not portable ORM)
-- `summarizeGPSThread` — GPT-5 thread summarization
-- `getMcpTools` — MCP session bootstrap + dual content-type parsing
+**AI / Core (6 — convert to agent invocations with structured output)**
+- `answerKBQuestion` → Zendesk KB Agent + Zod output schema (question, answer, sources)
+- `getTicketSummary` → Zendesk Support Agent + Zod output schema (summary, key fields, sentiment)
+- `findSimilarTickets` → Support Team (Zendesk + Jira) + Zod output schema (ranked similar tickets)
+- `searchSimilarJiraIssues` → Jira Agent + Zod output schema (replaces raw `VECTOR_DISTANCE` SQL — ⚠️ confirm semantic search via AI Prisma embeddings covers this)
+- `summarizeGPSThread` → Zendesk Support Agent + Zod output schema (thread summary)
+- `getMcpTools` — MCP session bootstrap; keep as-is in the MCP server layer
 
 **API Keys (2):** `createApiKey`, `getApiKeyUsage` — Prisma CRUD + crypto
 
