@@ -31,7 +31,8 @@
       "Bash(grep -v \"^$\")",
       "WebFetch(domain:docs.anthropic.com)",
       "Skill(project)",
-      "Skill(project:*)"
+      "Skill(project:*)",
+      "mcp__filesystem__directory_tree"
     ]
   }
 }
