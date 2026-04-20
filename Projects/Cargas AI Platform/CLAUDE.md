@@ -161,6 +161,7 @@ Cross-cutting: API key auth middleware (fixes current anon gap), unified usage l
 | 2026-04-17 | zendesk-cargas-ai keeps ZAF deploy, guts AI logic | ZAF requires its own manifest; only `ai-calls/` needs replacing |
 | 2026-04-17 | Fix anonymous auth gap in new platform | All 34 CargasAI-API functions currently have no request auth; new platform enforces API key middleware |
 | 2026-04-17 | Migrate Table Storage usage logs → Azure SQL | Consolidates storage; eliminates partial-write risk from current multi-table write pattern |
+| 2026-04-20 | Convert hardcoded multi-step AI workflows → Mastra agent invocations with structured output | Current functions like `findSimilarTickets` and `answerKBQuestion` are manually-coded mini-agents (fixed steps). In the new platform these become agent invocations with a Zod `structuredOutput` schema — adaptive reasoning, consistent response shape for the UI. Applies to all AI-chain functions. |
 
 ---
 
