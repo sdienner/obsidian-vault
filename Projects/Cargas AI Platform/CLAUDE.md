@@ -135,7 +135,8 @@ Cross-cutting: API key auth middleware (fixes current anon gap), unified usage l
 - [ ] Register in Mastra instance
 
 ### Phase 3: API + MCP Server (Weeks 5–7)
-- [ ] Port 34 Azure Functions → Express routes (18 trivial/moderate first, then 6 complex AI chains)
+- [ ] Port 34 Azure Functions → Express routes (18 trivial/moderate first)
+- [ ] Convert 5 AI-chain functions to Mastra agent invocations with Zod `structuredOutput` schemas (not hardcoded pipelines)
 - [ ] Migrate Azure Table Storage usage logs → Azure SQL (consolidate with main DB)
 - [ ] Port EnergyMCP 18 tools → `/mcp` Streamable HTTP endpoint
 - [ ] Add API key auth middleware (fix anonymous gap)
