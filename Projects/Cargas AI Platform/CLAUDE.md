@@ -77,7 +77,7 @@ Customer: `get-by-id`, `get-by-name`, `correlate-zendesk`, `get-data` (deploymen
 - `answerKBQuestion` → Zendesk KB Agent + Zod output schema (question, answer, sources)
 - `getTicketSummary` → Zendesk Support Agent + Zod output schema (summary, key fields, sentiment)
 - `findSimilarTickets` → Support Team (Zendesk + Jira) + Zod output schema (ranked similar tickets)
-- `searchSimilarJiraIssues` → Jira Agent + Zod output schema (replaces raw `VECTOR_DISTANCE` SQL — ⚠️ confirm semantic search via AI Prisma embeddings covers this)
+- `searchSimilarJiraIssues` → Jira Agent + Zod output schema — ⚠️ the agent's `jira-semantic-search` tool (EnergyMCP, AI Prisma embeddings) is a **separate store** from EnergyAgent's `search_similar_content` which still runs raw `VECTOR_DISTANCE` SQL against `zd-client`. Need to consolidate to one embedding store before this conversion is valid.
 - `summarizeGPSThread` → Zendesk Support Agent + Zod output schema (thread summary)
 - `getMcpTools` — MCP session bootstrap; keep as-is in the MCP server layer
 
