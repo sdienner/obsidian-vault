@@ -37,7 +37,9 @@ tags: [review, h2-2025, tracker]
 - **Keith** — delivered ✓
 - **Tom** — draft complete, delivery meeting pending
 - **Ryan** — draft complete, delivery meeting pending; P3→P4 evaluation complete
-- **Everyone else** — drafts not started
+- **Tony B, Jonathan B, Nate K, Justin M** — drafts complete, delivery meeting pending
+- **Matt H** — draft in progress
+- **Devin S, Casey H, Anne N** — drafts not started (no data yet)
 
 ## Engineering Ladder
 
