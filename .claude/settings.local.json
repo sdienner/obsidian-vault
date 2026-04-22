@@ -32,7 +32,13 @@
       "WebFetch(domain:docs.anthropic.com)",
       "Skill(project)",
       "Skill(project:*)",
-      "mcp__filesystem__directory_tree"
+      "mcp__filesystem__directory_tree",
+      "mcp__beb4449d-076c-4772-86fc-69dcb546d07e__searchJiraIssuesUsingJql",
+      "Bash(powershell -Command \"Get-Content 'C:\\\\Users\\\\sdienner\\\\.claude\\\\projects\\\\D--repos-obsidian-vault\\\\22473b99-180e-46a5-8de1-118749b2c675\\\\tool-results\\\\mcp-beb4449d-076c-4772-86fc-69dcb546d07e-searchJiraIssuesUsingJql-1776867577481.txt' | ConvertFrom-Json | Select-Object -ExpandProperty issues | Select-Object totalCount\")",
+      "Bash(python3 -c ' *)",
+      "Bash(node -e ' *)",
+      "mcp__beb4449d-076c-4772-86fc-69dcb546d07e__getJiraProjectIssueTypesMetadata",
+      "mcp__beb4449d-076c-4772-86fc-69dcb546d07e__getJiraIssueTypeMetaWithFields"
     ]
   }
 }
