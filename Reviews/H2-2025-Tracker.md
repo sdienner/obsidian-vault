@@ -23,11 +23,11 @@ tags: [review, h2-2025, tracker]
 
 ## Priority Queue
 
-**Drafts needed next** (work data in hand):
-1. **Jonathan B** — Operational load is notable; lots to discuss (deployments, bugs, low feature output)
-2. **Tony B** — Strong feature work but high meeting burden; QA friction worth exploring
-3. **Nate K** — High QA back-and-forth and unplanned work; warrants conversation
-4. **Matt H / Justin M** — Custom consulting ladder; ~$77k and ~$67k custom work respectively
+**Draft remaining:**
+1. **Matt H** — Custom consulting ladder; ~$77k custom work
+
+**Drafts complete, delivery pending:**
+- Tom G, Ryan S, Tony B, Jonathan B, Nate K, Justin M
 
 **No data yet:**
 - Devin S, Casey H, Anne N — need work summaries pulled
