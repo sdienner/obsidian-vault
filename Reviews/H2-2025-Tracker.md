@@ -12,11 +12,11 @@ tags: [review, h2-2025, tracker]
 | [[Keith M]] | [x] | [x] | [x] | [[Keith M - H2 2025 Performance Review]] |
 | [[Tom G]] | [x] | [x] | [ ] | [[Tom G - H2 2025 Performance Review]] |
 | [[Ryan S]] | [x] | [x] | [ ] | [[Ryan S - H2 2025 Performance Review]] |
-| [[Tony B]] | [x] | [ ] | [ ] | [[Tony B - H2 2025 Performance Review]] |
-| [[Jonathan B]] | [x] | [ ] | [ ] | [[Jonathan B - H2 2025 Performance Review]] |
-| [[Justin M]] | [x] | [ ] | [ ] | [[Justin M - H2 2025 Performance Review]] |
+| [[Tony B]] | [x] | [x] | [ ] | [[Tony B - H2 2025 Performance Review]] |
+| [[Jonathan B]] | [x] | [x] | [ ] | [[Jonathan B - H2 2025 Performance Review]] |
+| [[Justin M]] | [x] | [x] | [ ] | [[Justin M - H2 2025 Performance Review]] |
 | [[Matt H]] | [x] | [ ] | [ ] | [[Matt H - H2 2025 Performance Review]] |
-| [[Nate K]] | [x] | [ ] | [ ] | [[Nate K - H2 2025 Performance Review]] |
+| [[Nate K]] | [x] | [x] | [ ] | [[Nate K - H2 2025 Performance Review]] |
 | [[Devin S]] | [ ] | [ ] | [ ] | — |
 | [[Casey H]] | [ ] | [ ] | [ ] | — |
 | [[Anne N]] | [ ] | [ ] | [ ] | — |
