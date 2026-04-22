@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "People/Jonathan B.md",
-                "mode": "preview",
+                "file": "Daily/2026-04-21.md",
+                "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Jonathan B"
+              "title": "2026-04-21"
             }
           }
         ]
@@ -186,6 +186,8 @@
   },
   "active": "8ba08942f80bd4a3",
   "lastOpenFiles": [
+    "People/Jonathan B.md",
+    "Daily/2026-04-21.md",
     "Daily/2026-04-22.md",
     "Reviews/Jonathan B - H2 2025 Performance Review.md",
     "Reviews/Tom G - H2 2025 Performance Review.md",
@@ -215,9 +217,7 @@
     "Projects/Release Automation/CLAUDE.md",
     "Projects/Release Automation",
     "Goals/1. 3-Year Vision.md",
-    "Projects/MyFuelPortal/CLAUDE.md",
     "Projects/MyFuelPortal",
-    "Projects/Deltas/CLAUDE.md",
     "Projects/Deltas",
     "Projects/Code Collective",
     "Projects/CI-CD",
