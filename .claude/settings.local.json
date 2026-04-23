@@ -48,7 +48,9 @@
       "Bash(sqlcmd -S cargas-qa -d TimeTracking -E -Q \"SELECT * FROM Sprint WHERE name LIKE '%2026.h%' OR name LIKE '%2026h%'\")",
       "Bash(sqlcmd -S cargas-qa -d TimeTracking -E -Q \"SELECT TOP 10 id, name, email, initials, teamId FROM Developer ORDER BY name\")",
       "Bash(sqlcmd -S cargas-qa -d TimeTracking -E -Q ' *)",
-      "Bash(sqlcmd -S cargas-qa -d TimeTracking -E '-s|' -W -Q ' *)"
+      "Bash(sqlcmd -S cargas-qa -d TimeTracking -E '-s|' -W -Q ' *)",
+      "Skill(time-tracking)",
+      "Skill(time-tracking:*)"
     ]
   }
 }
