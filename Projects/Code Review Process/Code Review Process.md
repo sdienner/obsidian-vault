@@ -8,27 +8,33 @@ Related: [[2026-04-21 Dev Team Code Review Process]]
 
 ## PR Description Template
 
-Drop this in `.github/pull_request_template.md` in the repo so it auto-populates on every PR.
+Drop this in `.github/pull_request_template.md` in the repo so it auto-populates on every PR. The HTML comments (`<!-- ... -->`) appear while the author is editing but are hidden in the rendered description, so links and prompts don't clutter merged PRs.
 
 ```markdown
+<!--
+Before submitting:
+- Run the Self-Review Checklist: https://github.com/Cargas/energy-dev-docs/blob/main/docs/code-review/self-review-checklist.md
+- Comment conventions (blocking / suggestion / question / praise): https://github.com/Cargas/energy-dev-docs/blob/main/docs/code-review/comment-conventions.md
+-->
+
 ## What
-<1-2 sentence summary of the change>
+<!-- 1-2 sentence summary of the change -->
 
 ## Why
-<Jira link, or brief context if no ticket>
+<!-- Jira link (CAR-XXXXX), or brief context if no ticket -->
 
 ## How to test
-<Manual steps to verify, or "Covered by test X in file Y">
+<!-- Manual steps to verify, or "Covered by test X in file Y" -->
 
 ## Risks & notes
-<Anything the reviewer should watch for — tricky tradeoffs, follow-ups to file,
-areas you're uncertain about, decisions you'd like a second opinion on>
+<!-- Anything the reviewer should watch for — tricky tradeoffs, follow-ups to file,
+areas you're uncertain about, decisions you'd like a second opinion on -->
 
 ## Screenshots
-<For UI changes — before/after>
+<!-- For UI changes — before/after. Delete this section if not applicable. -->
 ```
 
-**Why this template matters:** Reviewers currently don't know what to look for, so they don't comment. The "Risks & notes" section in particular gives the author a place to pre-flag concerns, which tends to unlock more useful feedback than a blank PR.
+**Why this template matters:** Reviewers currently don't know what to look for, so they don't comment. The "Risks & notes" section in particular gives the author a place to pre-flag concerns, which tends to unlock more useful feedback than a blank PR. The HTML-commented links at the top serve as a just-in-time reminder for authors filling in the template, without polluting the rendered PR description after submission.
 
 ---
 
