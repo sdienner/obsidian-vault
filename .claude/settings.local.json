@@ -50,7 +50,8 @@
       "Bash(sqlcmd -S cargas-qa -d TimeTracking -E -Q ' *)",
       "Bash(sqlcmd -S cargas-qa -d TimeTracking -E '-s|' -W -Q ' *)",
       "Skill(time-tracking)",
-      "Skill(time-tracking:*)"
+      "Skill(time-tracking:*)",
+      "Bash(cerelease patch *)"
     ]
   }
 }
