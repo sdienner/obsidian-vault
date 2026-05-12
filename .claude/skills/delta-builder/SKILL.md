@@ -153,16 +153,19 @@ cd D:/repos/CargasEnergy.worktrees/deltas && cerelease create-delta "2025.07,202
 
 ### Phase 4: Build Delta Packages
 
-Once all fix branches are merged, clean build artifacts then build the packages (no `--skipDeltaPackageBuild`):
+Once all fix branches are merged, build each version individually — running `git clean` before each one (no `--skipDeltaPackageBuild`):
 
 ```bash
-cd D:/repos/CargasEnergy.worktrees/deltas && git clean -fxd -e CargasEnergyWeb/node_modules
-cd D:/repos/CargasEnergy.worktrees/deltas && cerelease create-delta "2025.01,2025.02,2025.03,2025.04,2025.05,2025.06,2025.07,2025.08,2025.09"
+cd D:/repos/CargasEnergy.worktrees/deltas && git clean -fxd -e "CargasEnergyWeb/node_modules"
+cd D:/repos/CargasEnergy.worktrees/deltas && cerelease create-delta "2025.01"
+
+cd D:/repos/CargasEnergy.worktrees/deltas && git clean -fxd -e "CargasEnergyWeb/node_modules"
+cd D:/repos/CargasEnergy.worktrees/deltas && cerelease create-delta "2025.02"
+
+# ... repeat for each version in the release plan
 ```
 
-**Important:** Always run `git clean -fxd -e CargasEnergyWeb/node_modules` before building. Stale build artifacts (obj/, bin/) from prior branches cause MSBuild failures.
-
-Use the full comma-separated list of ALL versions from the release plan.
+**Important:** Always run `git clean -fxd -e "CargasEnergyWeb/node_modules"` before each individual build. Stale build artifacts (obj/, bin/) from prior branches cause MSBuild failures. Building one version at a time prevents cross-version artifact contamination.
 
 ### Phase 5: Summary Output
 
