@@ -51,7 +51,10 @@
       "Bash(sqlcmd -S cargas-qa -d TimeTracking -E '-s|' -W -Q ' *)",
       "Skill(time-tracking)",
       "Skill(time-tracking:*)",
-      "Bash(cerelease patch *)"
+      "Bash(cerelease patch *)",
+      "Bash(Select-String -Path \"C:\\\\Users\\\\sdienner\\\\.claude\\\\projects\\\\D--repos-obsidian-vault\\\\cc57f423-9665-4e1f-8f36-e536f6c16f93\\\\tool-results\\\\bh7xje25x.txt\" -Pattern \"error|Error|FAILED|failed\")",
+      "Bash(Select-Object -Last 20)",
+      "Bash(Format-Table -AutoSize)"
     ]
   }
 }
