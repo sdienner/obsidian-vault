@@ -53,8 +53,15 @@ Harness Cargas's existing technical talent to solve internal challenges — form
 - **Hackathons** — Rapid prototyping events, cross-team collaboration
 - **Idea to Implementation Pipeline** — Connect non-technical staff ideas with technical resources
 
+## Technical Guides
+
+- [[Setup Outline]] — Phased plan covering organizational + technical setup
+- [[Server Setup Guide]] — Azure VM, Traefik, oauth2-proxy, PostgreSQL
+- [[Publishing Guide]] — How to create, deploy, and manage apps
+
 ## Notes
 
 - Power Automate new customer flow (Marvin's) cited as example that saved significant time for Jaiya
 - Cargas AI Zendesk plugin cited as cross-functional teamwork example
 - Jonathan B is AI-savvy — potential contributor
+- 2026-05-18: Fred's Teams thread + Kim Ireland's Enterprise Enablement response revealed three-layer model — see [[Setup Outline]]
