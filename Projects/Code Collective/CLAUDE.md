@@ -4,8 +4,8 @@
 A company-wide initiative to formalize collaboration among Cargas engineers and technical staff on internal projects — harnessing existing talent to solve real company problems without distracting from client priorities.
 
 ## Status
-- **Phase:** Planning
-- **Progress:** 10%
+- **Phase:** Planning → Alignment
+- **Progress:** 15%
 - **Started:** 2025-05-15
 - **Target:** Q4 2026 (pilot projects running)
 
