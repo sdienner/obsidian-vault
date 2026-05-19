@@ -16,9 +16,10 @@ A company-wide initiative to formalize collaboration among Cargas engineers and 
 - Idea-to-implementation pipeline connecting non-technical staff with technical contributors
 
 ## Current Focus
-- Vibe coding server setup (meeting to schedule)
-- Identify pilot project candidates from existing work (EnergyScripts, ai.cargas.com, Power Automate flows)
-- Define steering committee membership
+- Align with Kim Ireland's Enterprise Enablement initiative — meeting scheduled next week
+- Position Code Collective as the execution arm of Enterprise Enablement
+- Vibe coding server setup (infrastructure for deployed tools)
+- Identify pilot project candidates from Enterprise Enablement's Asana list + existing work
 
 ## Key Decisions
 | Date | Decision | Context |
