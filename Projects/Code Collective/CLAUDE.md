@@ -29,13 +29,17 @@ A company-wide initiative to formalize collaboration among Cargas engineers and 
 | 2026-05-18 | Align with Enterprise Enablement | Fred's thread + Kim's response revealed perfect fit: EE = demand pipeline, CC = execution framework, Vibe Server = deployment platform |
 
 ## Next Actions
-- [ ] Schedule vibe coding server meeting
-- [ ] Establish steering committee (cross-functional, define framework details)
-- [ ] Identify 2-3 pilot projects for high-impact demonstration
+- [ ] Reply to Fred's Teams thread — connect Code Collective to his ask
+- [ ] Meet with Kim Ireland — align Enterprise Enablement + Code Collective
+- [ ] Agree on shared project board with Kim (her Asana list or unified system)
+- [ ] Form steering committee (Kim as Biz Ops liaison, Fred as exec champion)
+- [ ] Begin vibe coding server Phase 1 (Azure VM, Traefik, oauth2-proxy)
+- [ ] Select 2-3 pilot projects from Enterprise Enablement list
 - [ ] Create resource framework (time allocation, repo structure, doc standards)
 
 ## Blockers
-- Needs steering committee formation before pilots can be formally scoped
+- Kim alignment meeting needs to happen before formalizing shared pipeline
+- Vibe server infrastructure needed before pilots can deploy
 
 ## Resources
 - **Presentation:** `d:/repos/cargascodecollective` (Slidev)
