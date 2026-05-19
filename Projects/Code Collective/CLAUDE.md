@@ -25,7 +25,8 @@ A company-wide initiative to formalize collaboration among Cargas engineers and 
 | Date | Decision | Context |
 |------|----------|---------|
 | 2025-05-15 | Presented initiative to leadership | Slidev presentation at `d:/repos/cargascodecollective` |
-| | Manager-approved dedicated time model | Prevents deprioritization vs. client work |
+| 2025-05-15 | Manager-approved dedicated time model | Prevents deprioritization vs. client work |
+| 2026-05-18 | Align with Enterprise Enablement | Fred's thread + Kim's response revealed perfect fit: EE = demand pipeline, CC = execution framework, Vibe Server = deployment platform |
 
 ## Next Actions
 - [ ] Schedule vibe coding server meeting
