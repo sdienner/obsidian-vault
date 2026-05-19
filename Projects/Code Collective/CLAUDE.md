@@ -43,8 +43,17 @@ A company-wide initiative to formalize collaboration among Cargas engineers and 
 
 ## Resources
 - **Presentation:** `d:/repos/cargascodecollective` (Slidev)
+- **Setup Outline:** [[Setup Outline]] — Full phased setup plan
+- **Vibe Server Design:** `C:\Users\sdienner\Downloads\vibe-coding-server-complete-export.md`
+- **Enterprise Enablement Intake:** Asana form (managed by Kim Ireland / Biz Ops)
 - **Supports:** [[2. Yearly Goals#Engineering Delivery]]
 - **Related:** [[AI Automation/CLAUDE]]
 
+## Key People
+- **Kim Ireland** — Enterprise Enablement lead, Biz Ops. Building demand pipeline. Wants to understand how CC fits.
+- **Fred Bowers** — Executive sponsor energy. Sees the opportunity, openly asking for this system. His NoCo/Jaiya example is the perfect proof point.
+- **Jonathan B** — AI-savvy developer, potential early contributor
+- **Marvin** — Power Automate work already demonstrates the CC model informally
+
 ## Notes for Claude
-This is Scott's primary strategic initiative — the Code Collective is the vehicle for expanding his scope beyond direct team management. Current projects (EnergyScripts, Article-ify, ai.cargas.com tools, Power Automate flows) are informal precursors. Jonathan B is an AI-savvy potential contributor. The vibe coding server is related infrastructure.
+This is Scott's primary strategic initiative — the Code Collective is the vehicle for expanding his scope beyond direct team management. The key insight from 2026-05-18: Code Collective is the execution arm of Enterprise Enablement. Three-layer model: Enterprise Enablement (demand) + Code Collective (people/governance) + Vibe Coding Server (platform). Kim Ireland is meeting Scott next week to discuss how they connect. Fred's Teams thread is the catalyst — respond there to plant the flag.
