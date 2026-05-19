@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Projects/Cargas AI Platform/CLAUDE.md",
+                "file": "Projects/Code Collective/Setup Outline.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "CLAUDE"
+              "title": "Setup Outline"
             }
           }
         ]
@@ -185,6 +185,7 @@
   },
   "active": "8ba08942f80bd4a3",
   "lastOpenFiles": [
+    "Projects/Cargas AI Platform/CLAUDE.md",
     "Projects/AI Automation/AI Automation.md",
     "Projects/Code Collective/Code Collective.md",
     "Daily/2026-05-04.md",
@@ -206,7 +207,6 @@
     "Reviews/Jonathan B - H2 2025 Performance Review.md",
     "Reviews/Tom G - H2 2025 Performance Review.md",
     "Projects/Cargas AI Platform/CLAUDE.md.tmp.41920.1776691637172",
-    "Projects/Cargas AI Platform/CLAUDE.md",
     "Projects/Cargas AI Platform",
     "ai site plan.md",
     "Projects/MFP CE Module/CLAUDE.md",
