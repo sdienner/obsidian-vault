@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Projects/Code Collective/Setup Outline.md",
+                "file": "Projects/Code Collective/Publishing Guide.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Setup Outline"
+              "title": "Publishing Guide"
             }
           }
         ]
@@ -185,9 +185,11 @@
   },
   "active": "8ba08942f80bd4a3",
   "lastOpenFiles": [
+    "Projects/Code Collective/Server Setup Guide.md",
+    "Projects/Code Collective/Setup Outline.md",
+    "Projects/Code Collective/Code Collective.md.tmp.40936.ef0e32a9f8a4",
     "Projects/Code Collective/Publishing Guide.md",
     "Projects/Code Collective/Publishing Guide.md.tmp.40936.2ecdeca47d78",
-    "Projects/Code Collective/Server Setup Guide.md",
     "Projects/Code Collective/Server Setup Guide.md.tmp.40936.0632b745f148",
     "Projects/Cargas AI Platform/CLAUDE.md",
     "Projects/AI Automation/AI Automation.md",
@@ -214,12 +216,10 @@
     "Projects/Cargas AI Platform",
     "ai site plan.md",
     "Projects/MFP CE Module/CLAUDE.md",
-    "Projects/MFP CE Module",
     "Daily/2026-04-17.md",
     "Daily/2026-04-14.md",
     "Daily/2026-04-13.md",
     "Meetings/2026-04-09 Sprint Planning.md",
-    "Meetings/2026-04-09 Quick 1-1 Tom Groff.md",
-    "Meetings/2026-04-09 Product Team Monthly Meeting.md"
+    "Meetings/2026-04-09 Quick 1-1 Tom Groff.md"
   ]
 }
