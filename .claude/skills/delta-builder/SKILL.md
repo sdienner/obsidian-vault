@@ -109,14 +109,14 @@ Sometimes a fix needs to go into a new delta, but some versions already have pri
    ```bash
    cd D:/repos/CargasEnergy.worktrees/deltas && git checkout -b dfb/CAR-XXXXX-2025.01 origin/delta/2025.01-C
    cd D:/repos/CargasEnergy.worktrees/deltas && git cherry-pick <commit1> <commit2>
-   cd D:/repos/CargasEnergy.worktrees/deltas && git push origin dfb/CAR-XXXXX-2025.01
+   cd D:/repos/CargasEnergy.worktrees/deltas && git push -u origin dfb/CAR-XXXXX-2025.01:dfb/CAR-XXXXX-2025.01
    ```
 
 2. **For versions without prior deltas** — use the standard dfb off the release branch:
    ```bash
    cd D:/repos/CargasEnergy.worktrees/deltas && git checkout -b dfb/CAR-XXXXX origin/release/2025.03
    cd D:/repos/CargasEnergy.worktrees/deltas && git cherry-pick <commit1> <commit2>
-   cd D:/repos/CargasEnergy.worktrees/deltas && git push origin dfb/CAR-XXXXX
+   cd D:/repos/CargasEnergy.worktrees/deltas && git push -u origin dfb/CAR-XXXXX:dfb/CAR-XXXXX
    ```
 
 3. **When merging** — run separate `cerelease create-delta` commands, one per dfb branch, each targeting only its own version(s):
