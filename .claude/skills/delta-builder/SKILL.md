@@ -81,6 +81,14 @@ Example: If CAR-30298 first appears in 2025.01, branch from `2025.01`:
 cd D:/repos/CargasEnergy.worktrees/deltas && git checkout -b dfb/CAR-30298 2025.01
 ```
 
+**Verify the base is a valid common ancestor.** Branching from the earliest version only works if that branch is an ancestor of **every** target version's line — then one dfb feeds them all and cerelease merges in only the fix. Confirm it:
+```bash
+cd D:/repos/CargasEnergy.worktrees/deltas && git merge-base --is-ancestor origin/<base-branch> origin/delta/<version>-<latest-letter> && echo OK || echo "NOT an ancestor"
+```
+If the base is **not** an ancestor of some target line (e.g., the issue spans divergent release lines), that version needs its own version-specific dfb — see "Multi-version backports that conflict" below.
+
+**Check for a pre-existing dfb branch first.** If `dfb/CAR-XXXXX` already exists, inspect what it carries vs its base (`git log <base>..dfb/CAR-XXXXX`). If it's mis-based or carrying unrelated commits, delete the remote (`git push origin --delete dfb/CAR-XXXXX`) and rebuild clean rather than building on top of it.
+
 #### Step 2: Find and cherry-pick commits
 
 Find all commits for the issue:
