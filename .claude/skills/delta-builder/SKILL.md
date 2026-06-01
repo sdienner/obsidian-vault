@@ -39,6 +39,14 @@ Deltas are typically released in batches across multiple full versions. A releas
 
 ## How to Execute
 
+### Phase 0: Pre-flight
+
+Before creating any branches, get the repo into a known-clean state:
+
+1. **Fetch and prune:** `cd D:/repos/CargasEnergy.worktrees/deltas && git fetch origin --prune`
+2. **Clean the working tree:** the delta worktree accumulates modified *tracked* build artifacts (`bin/*.dll`, `Deployment.js/css`) that will block `git checkout -b`. Reset them with `git reset --hard HEAD` (add `git clean -fxd -e "CargasEnergyWeb/node_modules"` if untracked junk is present).
+3. **Confirm nothing is mid-flight:** `git status` should show no cherry-pick or merge in progress. If one is, finish or `git cherry-pick --abort` it first.
+
 ### Phase 1: Parse the Release Plan
 
 1. Ask the user for the **Jira release issue key** (e.g., `CAR-12345`)
