@@ -192,6 +192,15 @@ One line per fix branch — `<fixbranch> <versions-csv> [create]` — derived fr
 
 **`create` logic** (mint each next delta branch exactly once): normally the single **widest-coverage** fix branch — one spanning every version in the release — is listed **first** with `create`, and every other branch merges into the branches it minted (no `create`). If no single branch covers every version, tag enough early lines `create` so each version's next delta gets minted once.
 
+**Shortcut — draft the plan from the grid:** [`scripts/draft-plan.sh`](scripts/draft-plan.sh) emits a draft plan. Feed it one `<issue-key> <versions-csv>` line per issue (straight from the Phase 1 grid); it maps each to its dfb branch(es) on origin, infers split-branch ranges from `-YYYY.MM` suffixes, auto-tags the widest line `create`, and warns about partial or missing branches. **Always review its output** — it can't know about dropped ranges or fixes not yet pushed — then pass it to `merge-fix-branches.sh`.
+
+```bash
+bash .claude/skills/delta-builder/scripts/draft-plan.sh - <<'GRID'
+CAR-32274 2025.09,2025.10,2025.11,2025.12,2026.01,2026.02,2026.03,2026.04,2026.05
+CAR-33693 2025.09,2025.10,2025.11,2025.12,2026.01,2026.02,2026.03,2026.04
+GRID
+```
+
 #### Step 2 — `check` (preflight + conflict pre-check)
 
 ```bash
