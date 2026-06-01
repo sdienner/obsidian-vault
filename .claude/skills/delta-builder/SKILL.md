@@ -24,6 +24,8 @@ All git and cerelease commands MUST be prefixed with:
 cd D:/repos/CargasEnergy.worktrees/deltas &&
 ```
 
+**Release branch naming:** Versions **2025.10 and older** use plain branch names (`2025.09`, `2025.10`); **2025.11 and newer** use the `release/` prefix (`release/2025.11`, `release/2026.05`). Old release branches may also have been deleted entirely. Always confirm the exact base branch name with `git branch -r` before checking out — don't assume a `release/` prefix.
+
 ## About Deltas
 
 Deltas are versions of Cargas Energy that only include changes made since the last full version — smaller downloads and quicker updates.
