@@ -99,7 +99,13 @@ cd D:/repos/CargasEnergy.worktrees/deltas && git --no-pager log --all --no-merge
 **Critical rules:**
 - There may be **multiple commits** per issue — include all of them
 - Commits may appear **more than once** if they were cherry-picked into other branches — only include unique, relevant commits (not duplicates from other branches)
-- Cherry-pick in chronological order
+- Cherry-pick in **chronological order by full commit timestamp** (use `--pretty=format:"%h %ci %s"`) — same-day commits need the time to order correctly
+- **If grep returns nothing or looks incomplete,** the commit may not reference the issue key in its message. Check any existing `dfb/CAR-XXXXX` branch, the Jira issue's linked PR, or grep the fix description instead.
+
+**Trace each commit before picking it** with `git branch -r --contains <hash>` to:
+- Identify the source line (confirms you have the right hash and a valid base)
+- Confirm the fix is **not already in the target deltas** (avoids redundant or empty cherry-picks)
+- Sanity-check the release grid — e.g., a fix already shipped in some versions' deltas should only target the remaining versions
 
 ```bash
 cd D:/repos/CargasEnergy.worktrees/deltas && git cherry-pick <commit-hash>
