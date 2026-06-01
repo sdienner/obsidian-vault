@@ -182,29 +182,50 @@ When a fix authored on a recent line must go back several versions, the cherry-p
 
 ### Phase 3: Merge Fix Branches into Delta Branches
 
-Use `cerelease create-delta` to merge each fix branch into the appropriate delta branches.
+This phase merges each fix branch into the **next** delta branch for its versions — minting those next delta branches in the process. It's orchestrated by a helper that encodes the safety steps (clean tree, local-branch sync, conflict pre-check, failure detection, verification); you supply the plan and resolve anything it flags.
 
-**Key logic for `--createNextDeltaBranches`:**
+**Helper:** [`scripts/merge-fix-branches.sh`](scripts/merge-fix-branches.sh) — modes: `check` (preflight + sync + conflict pre-check; nothing pushed), `run` (check, then merge, then verify), `verify` (re-check origin against the plan). Run it from the vault root; it `cd`s into the delta repo itself.
 
-- The **first fix branch** merged should use `--createNextDeltaBranches` for ALL versions in the release plan — this creates new delta branches (e.g., `delta/2025.01-D` if `delta/2025.01-C` was the last)
-- **Subsequent fix branches** that only apply to versions that already have new delta branches do NOT use `--createNextDeltaBranches`
-- If a subsequent fix branch applies to versions that do NOT yet have delta branches, split into two commands: one without the flag (for versions that already have branches) and one with the flag (for new versions)
+#### Step 1 — Write the merge plan
 
-**First issue example** (applies to 2025.01 through 2025.06):
+One line per fix branch — `<fixbranch> <versions-csv> [create]` — derived from the release grid (Phase 1) and the dfb branches from Phase 2.
+
+**`create` logic** (mint each next delta branch exactly once): normally the single **widest-coverage** fix branch — one spanning every version in the release — is listed **first** with `create`, and every other branch merges into the branches it minted (no `create`). If no single branch covers every version, tag enough early lines `create` so each version's next delta gets minted once.
+
+#### Step 2 — `check` (preflight + conflict pre-check)
+
 ```bash
-cd D:/repos/CargasEnergy.worktrees/deltas && cerelease create-delta "2025.01,2025.02,2025.03,2025.04,2025.05,2025.06" --createNextDeltaBranches --fixBranch "dfb/CAR-30298" --skipDeltaPackageBuild
+bash .claude/skills/delta-builder/scripts/merge-fix-branches.sh check - <<'PLAN'
+dfb/CAR-32274          2025.09,2025.10,2025.11,2025.12,2026.01,2026.02,2026.03,2026.04,2026.05 create
+dfb/CAR-33693-2025.09  2025.09,2025.10,2025.11,2025.12,2026.01,2026.02,2026.03
+dfb/CAR-33693-2026.04  2026.04
+dfb/CAR-34336          2026.01,2026.02,2026.03,2026.04
+PLAN
 ```
 
-**Second issue example** (applies to 2025.02 through 2025.05 — all already have delta branches):
-```bash
-cd D:/repos/CargasEnergy.worktrees/deltas && cerelease create-delta "2025.02,2025.03,2025.04,2025.05" --fixBranch "dfb/CAR-28519" --skipDeltaPackageBuild
-```
+It fetches, cleans the tree, refreshes each fix branch as a **local** branch, then simulates the accumulation merges per version and reports clean/conflict. Nothing is pushed. Resolve everything it flags before running.
 
-**Third issue example** (applies to 2025.01-2025.06 AND 2025.07-2025.09 which are new):
-```bash
-cd D:/repos/CargasEnergy.worktrees/deltas && cerelease create-delta "2025.01,2025.02,2025.03,2025.04,2025.05,2025.06" --fixBranch "dfb/CAR-31235" --skipDeltaPackageBuild
-cd D:/repos/CargasEnergy.worktrees/deltas && cerelease create-delta "2025.07,2025.08,2025.09" --createNextDeltaBranches --fixBranch "dfb/CAR-31235" --skipDeltaPackageBuild
-```
+#### Step 3 — Resolve conflicts the pre-check found
+
+- **`module.json` (CargasPay manifest):** the newer version's manifest is usually a superset that already contains the fix's entry → resolve with `--ours`. cerelease can't (its conflict path is interactive), so merge that one version manually, then **drop that version from the branch's plan line**:
+  ```bash
+  cd D:/repos/CargasEnergy.worktrees/deltas
+  git checkout delta/<V>-<letter> && git merge --no-ff dfb/CAR-XXXXX
+  git checkout --ours -- module.json && git add module.json
+  git commit --no-verify --no-edit
+  git push origin delta/<V>-<letter>:delta/<V>-<letter>
+  ```
+- **Code conflicts:** don't guess — that version needs its own version-specific dfb (see "Multi-version backports that conflict") or author escalation. Remove the affected version(s) from the plan and handle separately.
+
+#### Step 4 — `run` (execute + verify)
+
+When `check` is clean, re-run with `run` and the same plan. It re-checks, runs the cerelease merges in order, and verifies each delta contains its planned fixes. If cerelease stops on a branch, resolve it and re-run with a narrowed plan.
+
+#### cerelease behavior notes (why the helper exists)
+
+- It merges the fix branch by its **local** name — a branch that exists only as `origin/<fb>` (e.g. a teammate's) makes it crash with `TypeError …(reading 'failed')`. The helper syncs locals first.
+- It **exits 0 even when its merge step fails** — never trust the exit code; the helper greps the output for failure markers.
+- On a real conflict it opens an **interactive prompt** that hangs in a headless run — so we pre-check and resolve conflicts ourselves instead of letting cerelease hit them.
 
 ### Phase 4: Build Delta Packages
 
