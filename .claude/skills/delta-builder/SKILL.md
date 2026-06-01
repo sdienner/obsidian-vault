@@ -111,7 +111,11 @@ cd D:/repos/CargasEnergy.worktrees/deltas && git --no-pager log --all --no-merge
 cd D:/repos/CargasEnergy.worktrees/deltas && git cherry-pick <commit-hash>
 ```
 
-**If a conflict occurs during cherry-pick:** Abort immediately and prompt the user to resolve it manually. After they resolve, use `git cherry-pick --continue` to resume.
+**If a conflict occurs during cherry-pick:**
+- **Single, simple conflict:** stop and have the owner resolve it, then `git cherry-pick --continue`.
+- **Building many branches in one pass:** abort the conflicted one (`git cherry-pick --abort`), keep going with the rest, and report a summary (pushed vs needs-attention) at the end instead of stopping at the first conflict.
+- **A fix that conflicts on some versions but not others:** don't force a single resolution across the whole span — see "Multi-version backports that conflict" below.
+- **Never guess at feature/logic resolutions headed to production** — hand them to the commit author / item owner with a written handoff (base branch, commit hash, conflicting files, target versions).
 
 #### Step 3: Push the branch
 
