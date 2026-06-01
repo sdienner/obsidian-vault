@@ -127,6 +127,11 @@ cd D:/repos/CargasEnergy.worktrees/deltas && git push -u origin dfb/CAR-XXXXX:df
 
 Never run a bare `git push` for a dfb branch.
 
+After pushing, **verify the remote tip** shows the fix commit on top:
+```bash
+cd D:/repos/CargasEnergy.worktrees/deltas && git log -1 origin/dfb/CAR-XXXXX --pretty=format:"%h %s"
+```
+
 #### Repeat for each issue in the release plan.
 
 #### Special case: fix already in a previous delta for some versions
