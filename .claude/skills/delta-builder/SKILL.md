@@ -162,6 +162,24 @@ Sometimes a fix needs to go into a new delta, but some versions already have pri
    cd D:/repos/CargasEnergy.worktrees/deltas && cerelease create-delta "2025.03,2025.04" --createNextDeltaBranches --fixBranch "dfb/CAR-XXXXX" --skipDeltaPackageBuild
    ```
 
+#### Multi-version backports that conflict
+
+When a fix authored on a recent line must go back several versions, the cherry-pick often applies cleanly on newer versions but conflicts on older ones (the code diverged). Don't force one resolution across the whole span — map it first, then split:
+
+1. **Build a clean/conflict matrix.** Test-pick the commit onto each target version's branch and record clean vs conflict:
+   ```bash
+   for B in origin/2025.09 origin/release/2025.11 origin/release/2026.01; do
+     git checkout --detach "$B" >/dev/null 2>&1
+     git cherry-pick <hash> >/dev/null 2>&1 && echo "$B CLEAN" || echo "$B CONFLICT"
+     git cherry-pick --abort >/dev/null 2>&1
+   done
+   ```
+2. **Group the conflict versions.** Versions whose conflicting files are byte-identical share one resolution. Compare per file with `git rev-parse <branch>:<path>` — same blob hash → same group, so one fix serves them all.
+3. **Build clean ranges now** as `dfb/CAR-XXXXX-<earliest-clean-version>` off that version's branch (it feeds every newer clean version via cerelease).
+4. **Handle conflict ranges** as `dfb/CAR-XXXXX-<earliest-conflict-version>` off the earliest conflict version — resolve once per group, then verify the resolution merges cleanly into each version's delta. For feature/logic conflicts, escalate with a written handoff rather than guessing.
+5. **Merge each range with its own cerelease command**, scoped to its versions (see Phase 3).
+6. **Hold a version's package build** until all its fixes — including any escalated ones — have landed, so you don't ship a delta missing fixes the grid calls for.
+
 ### Phase 3: Merge Fix Branches into Delta Branches
 
 Use `cerelease create-delta` to merge each fix branch into the appropriate delta branches.
