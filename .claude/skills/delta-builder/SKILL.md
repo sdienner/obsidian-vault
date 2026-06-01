@@ -249,6 +249,7 @@ After completion, output a summary including:
 - **Fix branches created** — issue number and branch name for each
 - **Delta branches created or updated** — version and branch name for each
 - **Delta packages built** — version and package name for each
+- **QA coverage flags** — any issue that needed **more than one dfb branch** (its code diverged across versions). Each dfb is a separate, independent resolution, so QA must test that issue in **at least one version from each dfb's range** — a bug in one range's resolution won't surface when testing another. List the ranges per such issue.
 
 ## cerelease CLI Reference
 
