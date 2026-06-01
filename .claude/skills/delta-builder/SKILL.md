@@ -91,9 +91,13 @@ cd D:/repos/CargasEnergy.worktrees/deltas && git cherry-pick <commit-hash>
 
 #### Step 3: Push the branch
 
+**Branch push rule (always):** A dfb branch must be pushed to origin under its **own dfb name** — never under the branch it was created from (a `release/*` or `delta/*` branch). Because the dfb is checked out from another branch, its tracking ref points at that source branch, so a bare `git push` (or `git push origin HEAD`) can target the wrong remote branch and overwrite it. Always push with an **explicit `local:remote` refspec** naming the dfb branch on both sides, and use `-u` to repoint tracking at the dfb branch:
+
 ```bash
-cd D:/repos/CargasEnergy.worktrees/deltas && git push origin dfb/CAR-XXXXX
+cd D:/repos/CargasEnergy.worktrees/deltas && git push -u origin dfb/CAR-XXXXX:dfb/CAR-XXXXX
 ```
+
+Never run a bare `git push` for a dfb branch.
 
 #### Repeat for each issue in the release plan.
 
