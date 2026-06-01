@@ -229,19 +229,18 @@ When `check` is clean, re-run with `run` and the same plan. It re-checks, runs t
 
 ### Phase 4: Build Delta Packages
 
-Once all fix branches are merged, build each version individually — running `git clean` before each one (no `--skipDeltaPackageBuild`):
+Once all fix branches are merged, build each version's package with the helper — it cleans the tree before each build (stale obj/bin cause MSBuild failures), builds **one version at a time** (avoids cross-version artifact contamination), and stops on the first failed build (cerelease exits 0 even when a build fails, so it scans the output):
 
 ```bash
-cd D:/repos/CargasEnergy.worktrees/deltas && git clean -fxd -e "CargasEnergyWeb/node_modules"
-cd D:/repos/CargasEnergy.worktrees/deltas && cerelease create-delta "2025.01"
-
-cd D:/repos/CargasEnergy.worktrees/deltas && git clean -fxd -e "CargasEnergyWeb/node_modules"
-cd D:/repos/CargasEnergy.worktrees/deltas && cerelease create-delta "2025.02"
-
-# ... repeat for each version in the release plan
+bash .claude/skills/delta-builder/scripts/build-packages.sh 2025.09 2025.10 2025.11 2025.12 2026.01 2026.02 2026.03 2026.04 2026.05
 ```
 
-**Important:** Always run `git clean -fxd -e "CargasEnergyWeb/node_modules"` before each individual build. Stale build artifacts (obj/, bin/) from prior branches cause MSBuild failures. Building one version at a time prevents cross-version artifact contamination.
+Pass only the versions you're ready to build (hold any whose fixes are still pending). Any `--flag` is passed through to cerelease — e.g. `... 2026.05 --allApps` to also build APKs.
+
+**Manual fallback** (one version), if you need to run it by hand:
+```bash
+cd D:/repos/CargasEnergy.worktrees/deltas && git clean -fxd -e "CargasEnergyWeb/node_modules" && cerelease create-delta "2026.05"
+```
 
 ### Phase 5: Summary Output
 
