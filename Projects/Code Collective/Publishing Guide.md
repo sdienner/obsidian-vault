@@ -34,11 +34,13 @@ Every app deployed to the vibe server must conform to this contract:
 
 ### What you get for free
 
-- **SSO** — oauth2-proxy handles all authentication before requests reach your app
-- **HTTPS** — Traefik terminates TLS (and App Proxy terminates again at the edge)
-- **Subdomain routing** — `appname.apps.cargas.com` just works via Docker labels, and is published externally through App Proxy automatically (no per-app App Proxy setup)
-- **External access** — reachable from anywhere, no VPN, behind Entra sign-in
+- **SSO** — App Proxy pre-authenticates every external user with Entra ID before requests reach your app (no login code needed)
+- **HTTPS** — App Proxy terminates TLS at the edge; Traefik handles the internal hop
+- **Internal routing** — `appname.cargas.internal` just works via Docker labels
+- **External access** — reachable from anywhere (no VPN) behind Entra sign-in, once an admin creates the app's App Proxy publication (a one-time step per app while we're on the default `msappproxy.net` domain)
 - **Container restart** — Docker restarts your app on crash if healthcheck is configured
+
+> **Identity headers are not automatic on the default domain.** `X-Forwarded-User` / `X-Forwarded-Groups` only appear if your app is placed behind oauth2-proxy (see [[Server Setup Guide#5 oauth2-proxy Optional — identity for apps that need it]]). Pilots that only need "any authenticated employee" access don't need it. If your app needs to know *who* the user is, flag it when scoping.
 
 ---
 
