@@ -36,7 +36,7 @@ A company-wide initiative to formalize collaboration among Cargas engineers and 
 - [ ] Meet with Kim Ireland — align Enterprise Enablement + Code Collective
 - [ ] Agree on shared project board with Kim (her Asana list or unified system)
 - [ ] Form steering committee (Kim as Biz Ops liaison, Fred as exec champion)
-- [ ] Begin vibe coding server Phase 1 (Azure VM, Traefik, oauth2-proxy)
+- [ ] Begin vibe coding server Phase 1 (Azure VM + Windows connector VM, Entra App Proxy, container ports)
 - [ ] Select 2-3 pilot projects from Enterprise Enablement list
 - [ ] Create resource framework (time allocation, repo structure, doc standards)
 
