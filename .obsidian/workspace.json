@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Projects/Code Collective/Publishing Guide.md",
+                "file": "Projects/Engineering Team Leads/Engineering Team Leads.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Publishing Guide"
+              "title": "Engineering Team Leads"
             }
           }
         ]
@@ -185,12 +185,14 @@
   },
   "active": "8ba08942f80bd4a3",
   "lastOpenFiles": [
+    "Projects/Code Collective/Server Setup Guide.md.tmp.60136.085d3fe8dd09",
+    "Projects/Code Collective/Server Setup Guide.md",
+    "Projects/Code Collective/Publishing Guide.md",
+    "Projects/Code Collective/CLAUDE.md.tmp.60136.0698cf65c696",
     "Projects/Code Collective/Publishing Guide.md.tmp.60136.62a9385ecf67",
     "Projects/Code Collective/Server Setup Guide.md.tmp.60136.1479b55a359d",
-    "Projects/Code Collective/Server Setup Guide.md",
     "Projects/Code Collective/Setup Outline.md",
     "Meetings/2026-05-26 Code Collective Steering Committee.md",
-    "Projects/Code Collective/Publishing Guide.md",
     "Projects/Code Collective/Code Collective.md.tmp.40936.ef0e32a9f8a4",
     "Projects/Code Collective/Publishing Guide.md.tmp.40936.2ecdeca47d78",
     "Projects/Code Collective/Server Setup Guide.md.tmp.40936.0632b745f148",
@@ -211,11 +213,9 @@
     "Templates/Meeting Note.md",
     "People/Matt H.md.tmp.23584.1776867863025",
     "Reviews/H2-2025-Tracker.md.tmp.10676.1776867055897",
-    "Reviews/H2-2025-Tracker.md.tmp.10676.1776866832067",
     "People/Jonathan B.md",
     "Reviews/Jonathan B - H2 2025 Performance Review.md",
     "Reviews/Tom G - H2 2025 Performance Review.md",
-    "Projects/Cargas AI Platform/CLAUDE.md.tmp.41920.1776691637172",
     "ai site plan.md",
     "Projects/MFP CE Module/CLAUDE.md",
     "Daily/2026-04-17.md",
