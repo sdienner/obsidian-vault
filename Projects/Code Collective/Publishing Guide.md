@@ -328,7 +328,7 @@ docker exec postgres psql -U postgres -c "DROP ROLE my_app_user;"
 # Remove /data/apps/my-app from VM
 ```
 
-> **No App Proxy cleanup needed.** Under the wildcard publication, removing the container removes the route — the subdomain stops resolving to anything and external access ends automatically. There's no per-app App Proxy publication to delete.
+> **Remove the App Proxy publication too.** On the default domain each app has its own publication — delete the Enterprise Application in Entra when decommissioning, in addition to removing the container and database. (Under a future wildcard custom-domain setup this step goes away.)
 
 ---
 
