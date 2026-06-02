@@ -112,7 +112,7 @@ The Entra private network connector is **Windows-only software** — it cannot r
 
 This is the external front door. The connector dials out to Microsoft; nothing inbound is opened on the corporate firewall.
 
-> **Licensing:** App Proxy requires **Entra ID P1 or P2**. Confirm Cargas's licensing before committing — if P1/P2 isn't already held, this is a cost/decision gate.
+> **Licensing:** App Proxy requires Entra ID P1 or P2. ✅ **Confirmed (2026-06-02): Cargas has Entra ID P2** — App Proxy is available, and P2 additionally unlocks risk-based Conditional Access (Identity Protection) and PIM for securing published apps.
 
 ### Setup Steps
 
