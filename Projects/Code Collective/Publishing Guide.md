@@ -357,7 +357,7 @@ vibe-app-template/
 ├── src/
 │   └── ...                     # App source (pick your stack)
 ├── Dockerfile                  # Multi-stage build
-├── docker-compose.yml          # Traefik labels pre-configured (*.apps.cargas.com)
+├── docker-compose.yml          # Traefik labels pre-configured (*.cargas.internal)
 ├── .env.example                # Document required env vars
 ├── .dockerignore
 ├── .gitignore
