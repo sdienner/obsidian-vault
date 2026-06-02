@@ -46,11 +46,11 @@ Every app deployed to the vibe server must conform to this contract:
 
 ## ⚠️ Your App Is Internet-Facing (Behind SSO)
 
-Apps deploy under a **wildcard App Proxy publication**, so the moment your container is live it's reachable from the public internet at `https://<app>.apps.cargas.com` — **after** Entra ID sign-in. No VPN required. That's the point: it's what makes these tools actually get used (a manager can glance at a dashboard from their phone). But it changes your responsibilities as an author:
+Once published, your app is reachable from the public internet at `https://<app>-cargas.msappproxy.net` — **after** Entra ID sign-in. No VPN required. That's the point: it's what makes these tools actually get used (a manager can glance at a dashboard from their phone). But it changes your responsibilities as an author:
 
-- **Authorize by group — don't trust the network.** *Anyone* with a Cargas login passes the SSO gate. If your tool should be limited to specific people, check `X-Forwarded-Groups` inside your app. Never assume "internal network = safe" — there is no internal network boundary anymore.
-- **Treat sensitive data accordingly.** Customer PII, financials, etc. need an in-app group check and may warrant a stricter Conditional Access policy on the published app. Cargas has **Entra P2**, so risk-based Conditional Access (block risky sign-ins, require MFA/compliant device) is available — request it for sensitive apps when you scope the project.
-- **No secrets in the front end.** Assume the URL can be hit by any authenticated employee.
+- **Authorize, don't trust the network.** *Anyone* you (or the admin) assign to the publication passes the SSO gate. There is no internal network boundary protecting the data behind it. If your tool should be limited to specific people, restrict the App Proxy publication's user/group assignment — and, if the app runs behind oauth2-proxy, also check `X-Forwarded-Groups` inside your app.
+- **Treat sensitive data accordingly.** Customer PII, financials, etc. warrant a stricter Conditional Access policy on the published app. Cargas has **Entra P2**, so risk-based Conditional Access (block risky sign-ins, require MFA/compliant device) is available — request it for sensitive apps when you scope the project.
+- **No secrets in the front end.** Assume the URL can be hit by any assigned, authenticated employee.
 
 ---
 
