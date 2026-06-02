@@ -45,30 +45,39 @@ Enterprise Enablement answers *what to build*. Code Collective answers *who buil
 
 ## Phase 2: Infrastructure (Weeks 2-5, parallel with Phase 1)
 
+Bootstrap architecture (Option A): Entra App Proxy on the default `msappproxy.net` domain → connector → container ports. No reverse proxy or internal DNS yet. Full detail in [[Server Setup Guide]] and [[Publishing Guide]].
+
 ### Vibe Coding Server — Foundation
-- [ ] Provision Azure VM (`Standard_D4s_v5`, Ubuntu 24.04 LTS)
-- [ ] Install Docker + Docker Compose
-- [ ] Set up Traefik v3 with HTTPS
-- [ ] Configure oauth2-proxy with Microsoft Entra ID (OIDC)
-- [ ] DNS setup — wildcard `*.cargas.internal`
-- [ ] Deploy hello-world validation app
+- [x] Confirm Entra P2 / App Proxy licensing (confirmed 2026-06-02)
+- [ ] Provision Azure VM (`Standard_D4s_v5`, Ubuntu 24.04 LTS) — no public IP
+- [ ] Provision small Windows connector VM (same VNet)
+- [ ] Install Docker + Docker Compose; create the `vibe` network
+- [ ] Install + register the Entra private network connector
+- [ ] Open app port range (3001–3099) from the connector to the VM only
+- [ ] Deploy a hello-world container on a port; publish via App Proxy; validate external SSO login
 
 ### Vibe Coding Server — Database & Templates
-- [ ] Stand up shared PostgreSQL 16 container
-- [ ] Create app template repo (Dockerfile, Traefik labels, auth headers, DB connection)
-- [ ] Document the App Contract (port, subpath, auth headers, healthcheck)
+- [ ] Stand up shared PostgreSQL 16 container (one DB + role per app)
+- [ ] Create app template repo (Dockerfile, port-mapped compose, optional oauth2-proxy sidecar, DB connection)
+- [ ] Document the App Contract (host port, relative URLs, healthcheck, optional identity headers)
+- [ ] Start the port registry (app → port → publication)
 - [ ] Backup automation (pg_dumpall to Azure Blob Storage)
 
-### Vibe Coding Server — CI/CD
-- [ ] GitHub Actions pipeline (build, Trivy scan, lint/tests, push to GHCR, deploy)
-- [ ] Define the developer workflow: push to GitHub -> auto-deploy
-- [ ] Define the sponsored development workflow: request form -> assignment -> build -> deploy -> feedback
+### Vibe Coding Server — CI/CD & Publishing
+- [ ] GitHub Actions pipeline (build, Trivy scan, lint/tests, push to GHCR, SSH deploy)
+- [ ] Define the developer workflow: push to GitHub → auto-deploy → admin publishes via App Proxy
+- [ ] Define the sponsored workflow: request → assignment → build → publish → feedback
+- [ ] Define the per-app publication checklist + who holds the Entra admin role
 
-### Centralized Repos
+### Centralized Repos & Identity
 - [ ] Set up GitHub org structure (`cargas-internal/`)
 - [ ] Repo naming conventions and standards
-- [ ] README template with project context
+- [ ] README template with project context (incl. assigned port)
+- [ ] One shared oauth2-proxy Entra app registration (add a redirect URI per identity app)
 - [ ] Documentation standards (lightweight — don't over-process)
+
+### Defer to Graduation (custom domain)
+- Wildcard publishing / zero-touch deploys, Traefik routing, internal DNS, clean `*.apps.cargas.com` URLs, and shared cross-app SSO — see [[Server Setup Guide#Graduation Graduating to a Custom Domain]]
 
 ---
 
