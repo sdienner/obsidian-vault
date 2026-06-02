@@ -214,7 +214,7 @@ For non-technical users who need a tool built.
    → AI-assisted development for rapid scaffolding (optional)
 
 4. Requester tests
-   → Developer shares the URL: my-tool.apps.cargas.com
+   → Admin publishes the app; developer shares the URL: https://my-tool-cargas.msappproxy.net
    → Requester opens it from any device — laptop, phone, off the VPN —
      and signs in with their normal Cargas login (Entra SSO)
    → Provides feedback
