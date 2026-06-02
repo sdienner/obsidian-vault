@@ -151,7 +151,7 @@ Criteria for good pilot projects:
 
 ### Phase 4 (Scale)
 - 5+ developers have contributed to at least one project
-- 10+ tools deployed on `cargas.internal`
+- 10+ tools published via App Proxy
 - Enterprise Enablement intake generates steady pipeline of requests
 
 ---
