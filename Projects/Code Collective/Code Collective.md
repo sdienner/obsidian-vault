@@ -56,7 +56,7 @@ Harness Cargas's existing technical talent to solve internal challenges — form
 ## Technical Guides
 
 - [[Setup Outline]] — Phased plan covering organizational + technical setup
-- [[Server Setup Guide]] — Azure VM, Traefik, oauth2-proxy, PostgreSQL
+- [[Server Setup Guide]] — Azure VM, Entra App Proxy, container ports, PostgreSQL
 - [[Publishing Guide]] — How to create, deploy, and manage apps
 
 ## Notes
