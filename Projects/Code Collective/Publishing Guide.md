@@ -1,11 +1,12 @@
 ---
 date: 2026-05-18
+updated: 2026-06-02
 tags: [project, infrastructure, technical]
 status: active
 ---
 # Publishing Guide — Deploying Apps to the Vibe Coding Server
 
-How to build and deploy an app to `*.cargas.internal`. Covers both the developer workflow and the sponsored development workflow for non-technical requests.
+How to build and deploy an app to `*.apps.cargas.com`. Once deployed, an app is reachable from **any device with no VPN**, behind Entra ID single sign-on (published via Application Proxy). Covers both the developer workflow and the sponsored development workflow for non-technical requests.
 
 ---
 
@@ -32,9 +33,20 @@ Every app deployed to the vibe server must conform to this contract:
 ### What you get for free
 
 - **SSO** — oauth2-proxy handles all authentication before requests reach your app
-- **HTTPS** — Traefik terminates TLS
-- **Subdomain routing** — `appname.cargas.internal` just works via Docker labels
+- **HTTPS** — Traefik terminates TLS (and App Proxy terminates again at the edge)
+- **Subdomain routing** — `appname.apps.cargas.com` just works via Docker labels, and is published externally through App Proxy automatically (no per-app App Proxy setup)
+- **External access** — reachable from anywhere, no VPN, behind Entra sign-in
 - **Container restart** — Docker restarts your app on crash if healthcheck is configured
+
+---
+
+## ⚠️ Your App Is Internet-Facing (Behind SSO)
+
+Apps deploy under a **wildcard App Proxy publication**, so the moment your container is live it's reachable from the public internet at `https://<app>.apps.cargas.com` — **after** Entra ID sign-in. No VPN required. That's the point: it's what makes these tools actually get used (a manager can glance at a dashboard from their phone). But it changes your responsibilities as an author:
+
+- **Authorize by group — don't trust the network.** *Anyone* with a Cargas login passes the SSO gate. If your tool should be limited to specific people, check `X-Forwarded-Groups` inside your app. Never assume "internal network = safe" — there is no internal network boundary anymore.
+- **Treat sensitive data accordingly.** Customer PII, financials, etc. need an in-app group check and may warrant a stricter Conditional Access policy on the published app. Cargas has **Entra P2**, so risk-based Conditional Access (block risky sign-ins, require MFA/compliant device) is available — request it for sensitive apps when you scope the project.
+- **No secrets in the front end.** Assume the URL can be hit by any authenticated employee.
 
 ---
 
@@ -74,7 +86,7 @@ services:
       - proxy
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.my-app.rule=Host(`my-app.cargas.internal`)"
+      - "traefik.http.routers.my-app.rule=Host(`my-app.apps.cargas.com`)"
       - "traefik.http.routers.my-app.middlewares=oauth@docker"
       - "traefik.http.services.my-app.loadbalancer.server.port=3000"
 
@@ -104,6 +116,8 @@ def index():
     groups = request.headers.get("X-Forwarded-Groups", "").split(",")
     return {"user": user, "groups": groups}
 ```
+
+> **Authorization pattern:** for anything beyond "all employees," gate on group membership. Example: `if "energy-implementation" not in groups: return 403`. The SSO gate proves *who* the user is; your app decides *what they can do*.
 
 ### 4. Request a database (if needed)
 
@@ -153,7 +167,7 @@ git add -A && git commit -m "Initial app" && git push
 4. Pushes image to GitHub Container Registry
 5. SSHes to the VM and runs `docker compose pull && docker compose up -d`
 6. Traefik auto-discovers the new container
-7. App is live at `my-app.cargas.internal`
+7. App is live at `my-app.apps.cargas.com` — reachable externally with no new App Proxy publication (the wildcard publication covers it)
 
 ### Manual Deploy (fallback)
 
@@ -194,8 +208,9 @@ For non-technical users who need a tool built.
    → AI-assisted development for rapid scaffolding (optional)
 
 4. Requester tests
-   → Developer shares the URL: my-tool.cargas.internal
-   → Requester uses it with their normal Cargas login (SSO)
+   → Developer shares the URL: my-tool.apps.cargas.com
+   → Requester opens it from any device — laptop, phone, off the VPN —
+     and signs in with their normal Cargas login (Entra SSO)
    → Provides feedback
 
 5. Iterate and ship
@@ -203,6 +218,8 @@ For non-technical users who need a tool built.
    → Each push auto-deploys
    → When requester is satisfied, it's done
 ```
+
+> **Why "no VPN" matters here:** Fred's whole thesis is that these tools save people time and frustration. A tool that requires a VPN connection to open adds friction back. Because apps publish through App Proxy, the requester just clicks a link and signs in — same as any Microsoft 365 app.
 
 ### Quick Hits vs. Structured Projects
 
@@ -305,6 +322,8 @@ docker exec postgres psql -U postgres -c "DROP ROLE my_app_user;"
 # Remove /data/apps/my-app from VM
 ```
 
+> **No App Proxy cleanup needed.** Under the wildcard publication, removing the container removes the route — the subdomain stops resolving to anything and external access ends automatically. There's no per-app App Proxy publication to delete.
+
 ---
 
 ## Security Checklist for New Apps
@@ -313,6 +332,8 @@ Before deploying any app, verify:
 
 - [ ] No hardcoded secrets (use environment variables)
 - [ ] Auth headers are read, not bypassed (no public endpoints with sensitive data)
+- [ ] **Authorization by `X-Forwarded-Groups`** wherever the tool isn't meant for all employees — apps are internet-reachable behind SSO, so network location is NOT a control
+- [ ] Sensitive-data apps: request a scoped Conditional Access policy (Entra P2 supports risk-based / MFA / device-compliance policies)
 - [ ] If using a database, parameterized queries only (no string concatenation in SQL)
 - [ ] Trivy scan passes (no CRITICAL/HIGH vulnerabilities in dependencies)
 - [ ] Healthcheck endpoint exists at `/healthz`
@@ -330,7 +351,7 @@ vibe-app-template/
 ├── src/
 │   └── ...                     # App source (pick your stack)
 ├── Dockerfile                  # Multi-stage build
-├── docker-compose.yml          # Traefik labels pre-configured
+├── docker-compose.yml          # Traefik labels pre-configured (*.apps.cargas.com)
 ├── .env.example                # Document required env vars
 ├── .dockerignore
 ├── .gitignore
@@ -340,11 +361,12 @@ vibe-app-template/
 - [ ] Create `cargas-internal/vibe-app-template` repo on GitHub
 - [ ] Include starter apps for common stacks (Node, Python, Go)
 - [ ] Pre-configure Traefik labels, healthcheck, auth header reading
+- [ ] Include a sample group-authorization snippet so authors default to checking `X-Forwarded-Groups`
 
 ---
 
 ## Related
 
-- [[Server Setup Guide]] — Infrastructure setup for the VM
+- [[Server Setup Guide]] — Infrastructure setup for the VM and App Proxy
 - [[Setup Outline]] — Full phased plan
 - [[Code Collective]] — Initiative overview
