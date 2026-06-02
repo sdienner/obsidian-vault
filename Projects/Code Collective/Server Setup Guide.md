@@ -8,11 +8,11 @@ status: active
 
 Reference guide for standing up the Code Collective deployment platform on Azure.
 
-**Target state:** An internal Azure VM running Docker with Traefik reverse proxy and shared PostgreSQL. The VM has **no public IP**. External access is published through **Microsoft Entra Application Proxy**, which pre-authenticates users at Microsoft's edge and tunnels to the VM via an outbound-only connector.
+**Target state (bootstrap):** An internal Azure VM running Docker containers and a shared PostgreSQL. The VM has **no public IP**. Each app is published through **Microsoft Entra Application Proxy**, which pre-authenticates users at Microsoft's edge and tunnels — via an outbound-only connector — directly to that app's **container port** on the VM. No reverse proxy, no internal DNS, no internal certs.
 
-> **Current mode — default domain (bootstrap).** We are starting on App Proxy's **default `msappproxy.net` domain**, not a custom domain. This is the fastest way to get the first pilots live (no domain verification, no wildcard cert, no split-horizon DNS). Trade-off: **each app needs its own App Proxy publication** (a one-time Entra step per app) and gets a URL like `https://<app>-cargas.msappproxy.net`. When the platform grows past a few apps, [graduate to a custom domain](#graduation-graduating-to-a-custom-domain) for wildcard publishing (zero-touch deploys) and prettier URLs.
+> **Current mode — default domain + direct ports (Option A).** We start on App Proxy's **default `msappproxy.net` domain** and point each publication straight at a container port (`http://<vm-ip>:<port>`). Fastest possible start. Trade-offs: **one App Proxy publication per app**, **manual port assignment**, `msappproxy.net` URLs, and a reverse proxy is reintroduced only when we [graduate to a custom domain](#graduation-graduating-to-a-custom-domain).
 
-> **Scope note:** App Proxy is the exposure path for **browser-based web apps**. APIs, webhook receivers, and MCP servers are a poor fit (pre-auth model, connection timeouts) and need a separate path — see [Scope: APIs & MCP Servers](#scope-apis--mcp-servers). This guide covers the web-app platform.
+> **Scope note:** App Proxy is for **browser-based web apps**. APIs, webhooks, and MCP servers need a different path — see [Scope: APIs & MCP Servers](#scope-apis--mcp-servers).
 
 ---
 
@@ -26,33 +26,30 @@ Entra ID  ──── pre-authentication at Microsoft's edge
    │           (only authenticated cargas.com users pass)
    ▼
 Azure App Proxy service  (Microsoft cloud, DDoS/WAF, TLS edge, msappproxy.net cert)
-   │   external URL:  https://<app>-cargas.msappproxy.net   (one publication per app)
+   │   one publication per app:  https://<app>-cargas.msappproxy.net
    │
    │  outbound-only TLS tunnel (connector dials out — no inbound firewall rule)
    ▼
 App Proxy Connector  (small Windows VM in Cargas VNet)
    │
-   ▼  internal URL:  https://<app>.cargas.internal   (connector resolves to the VM)
+   ▼  internal URL:  http://<vm-private-ip>:<port>
 ┌──────────────────────────────────────────────────────────┐
 │ Linux VM (Ubuntu 24.04) — internal only, NO public IP      │
 │                                                            │
-│   Traefik v3  ──►  (oauth2-proxy, optional)  ──►  apps      │
-│   routes on        only for apps that need        (read    │
-│   *.cargas.internal user/group identity            headers)│
+│   :3001  hello            ← pre-auth-only app (container)   │
+│   :3002  oauth2-proxy ──► noco-tracker  ← identity app      │
+│   :3003  ...                                               │
 │                                                            │
 │   Shared PostgreSQL 16  (one DB + role per app)            │
 └──────────────────────────────────────────────────────────┘
-        ▲
-        │  Internal / VPN users resolve *.cargas.internal
-        └─ directly to the VM, bypassing App Proxy.
 ```
 
 ### Two layers of auth, and when you need each
 
-- **App Proxy pre-auth (always on)** — the *access gate*. Only authenticated Cargas users from the internet reach the VM. For many internal tools (read-only dashboards, lookups), this is **all you need** — every authenticated employee can use the tool.
-- **oauth2-proxy (optional, per need)** — the *identity provider for apps*. It populates `X-Forwarded-User` / `X-Forwarded-Groups` so an app can tell **who** the user is and authorize by group. Add it only when an app needs per-user/per-group behavior.
+- **App Proxy pre-auth (always on)** — the *access gate*. Only authenticated, assigned Cargas users reach the app. For many internal tools (dashboards, lookups) this is **all you need**.
+- **oauth2-proxy (per-app, only when needed)** — runs **in reverse-proxy mode** in front of an app that must know **who** the user is. It injects `X-Forwarded-User` / `X-Forwarded-Groups` for the app to authorize on. App Proxy points at the oauth2-proxy port instead of the app port.
 
-> **Why oauth2-proxy is optional on the default domain.** On `msappproxy.net`, each app's external hostname differs from its internal hostname, which complicates oauth2-proxy's sign-in redirect (see [Section 5](#5-oauth2-proxy-optional--identity-for-apps-that-need-it)). For bootstrap pilots that only need "authenticated employee" access, skipping oauth2-proxy avoids that entirely. Shared single-sign-on identity across many apps is one of the things the [custom-domain graduation](#graduation-graduating-to-a-custom-domain) makes clean.
+> Because each identity app gets its **own** oauth2-proxy, its redirect URL is simply its own `msappproxy.net` callback — no shared-instance juggling. (Shared SSO across many apps is a custom-domain benefit; see [graduation](#graduation-graduating-to-a-custom-domain).)
 
 ---
 
@@ -65,183 +62,116 @@ App Proxy Connector  (small Windows VM in Cargas VNet)
 | **Size** | `Standard_D4s_v5` (4 vCPU, 16 GB RAM) |
 | **OS** | Ubuntu 24.04 LTS |
 | **OS Disk** | 64 GB Premium SSD |
-| **Data Disk** | 128 GB Premium SSD (mount at `/data` for Docker volumes + Postgres) |
+| **Data Disk** | 128 GB Premium SSD (mount at `/data`) |
 | **Region** | Same as existing Cargas Azure resources |
 | **Network** | Corporate VNet, **no public IP** |
-| **Inbound** | Allow 443 (and 80 for redirect) from the connector VM + internal/VPN subnets only. No internet inbound. |
+| **Inbound** | Allow the app port range (e.g. **3001–3099**) from the connector VM only. No internet inbound. |
 
 ### Companion: App Proxy Connector VM
 
-The Entra private network connector is **Windows-only software** — it cannot run on the Ubuntu VM. Stand up a small Windows host for it (or reuse an existing Windows Server in the VNet).
+The Entra private network connector is **Windows-only** — it can't run on the Ubuntu VM. Stand up a small Windows host (or reuse an existing Windows Server in the VNet).
 
 | Setting | Value |
 |---------|-------|
-| **Size** | `Standard_B2s` / `D2s_v5` (2 vCPU, 4–8 GB) — connector is lightweight |
+| **Size** | `Standard_B2s` / `D2s_v5` (2 vCPU, 4–8 GB) — lightweight |
 | **OS** | Windows Server 2022 |
-| **Network** | Same VNet as the app VM; **outbound 443 to Azure**; line-of-sight to the app VM; resolves `*.cargas.internal` to the VM |
-| **HA** | Two connectors in one connector group recommended for production; one is fine to start |
+| **Network** | Same VNet; **outbound 443 to Azure**; can reach `<vm-private-ip>:<port range>` |
+| **HA** | Two connectors in one group for production; one is fine to start |
 
 ### Post-Provision Steps (App VM)
 
 - [ ] Mount data disk at `/data`
-- [ ] Set up SSH access (key-based, no password auth)
+- [ ] SSH access (key-based, no password auth)
 - [ ] Install Docker Engine + Docker Compose v2
-- [ ] Create directory structure:
+- [ ] Create the shared network and dirs:
 
 ```
 /data/
-  traefik/
-    config/      # dynamic config (TLS cert for *.cargas.internal)
-    certs/
   postgres/
     data/
     backups/
   apps/
+    hello/
+    noco-tracker/
+```
+```bash
+docker network create vibe   # shared network: apps ↔ postgres ↔ oauth2-proxy
 ```
 
 ### Scale Triggers
-- Memory >80% sustained → upgrade app VM to `D8s_v5`
-- CPU >70% sustained → evaluate workload or upgrade
+- Memory >80% sustained → upgrade to `D8s_v5`
+- CPU >70% sustained → evaluate or upgrade
 - Disk >75% → expand data disk
 
 ---
 
 ## 2. Microsoft Entra Application Proxy (Default Domain)
 
-This is the external front door. The connector dials out to Microsoft; nothing inbound is opened on the corporate firewall.
+The external front door. The connector dials out to Microsoft; nothing inbound is opened on the corporate firewall.
 
-> **Licensing:** App Proxy requires Entra ID P1 or P2. ✅ **Confirmed (2026-06-02): Cargas has Entra ID P2** — App Proxy is available, and P2 additionally unlocks risk-based Conditional Access (Identity Protection) and PIM for securing published apps.
+> **Licensing:** App Proxy requires Entra ID P1 or P2. ✅ **Confirmed (2026-06-02): Cargas has Entra ID P2** — App Proxy is available, and P2 also unlocks risk-based Conditional Access (Identity Protection) and PIM for securing published apps.
 
 ### One-Time Setup
 
-- [ ] Install the **Entra private network connector** on the Windows connector VM (download from Entra admin center → Application Proxy)
+- [ ] Install the **Entra private network connector** on the Windows connector VM
 - [ ] Confirm the connector registers and shows **Active**
-- [ ] Confirm the connector can resolve `*.cargas.internal` to the app VM
+- [ ] Confirm the connector can reach `http://<vm-private-ip>:<port>`
 
-### Publish Each App (per-app on the default domain)
+### Publish Each App (per-app, direct to port)
 
-There is **no wildcard** on the default domain, so you create one Enterprise Application publication per tool:
+One Enterprise Application publication per tool:
 
 | App Proxy setting | Value |
 |-------------------|-------|
 | **External URL** | `https://<app>-cargas.msappproxy.net` (auto-assigned; `<tenant>` = `cargas`) |
-| **Internal URL** | `https://<app>.cargas.internal` (the connector reaches Traefik here) |
+| **Internal URL** | `http://<vm-private-ip>:<port>` (the app's container port — or its oauth2-proxy port) |
 | **Pre-authentication** | Microsoft Entra ID |
 | **Connector group** | The group containing your connector(s) |
-| **Backend cert validation** | On if Traefik presents a connector-trusted cert; see [Section 3](#3-internal-dns--certificates) |
-| **Translate URLs in headers / body** | On (lets App Proxy rewrite internal links in responses to the external URL) |
+| **Backend cert validation** | N/A — internal hop is HTTP inside the VNet (harden later) |
+| **Translate URLs in headers / body** | On (rewrites internal links in responses to the external URL) |
 
 - [ ] Assign the users/groups who may access each published app
 - [ ] (Sensitive apps) attach a Conditional Access policy — Entra P2 supports MFA / compliant-device / risk-based policies
 
-> **The per-app cost.** Each new tool = one new publication + a user/group assignment. Acceptable for a handful of pilots; it's the main reason to graduate to a custom domain later.
+> **App authors:** because the external host differs from the internal `ip:port`, build apps with **relative URLs** so links work behind the published hostname. App Proxy's URL translation handles most absolute-link cases, but relative is safest.
 
-> **Verify against current Microsoft docs:** the backend request timeout (historically ~85s default, extendable to ~180s via the "Long" setting) — this is why streaming/long-poll workloads don't belong here.
-
----
-
-## 3. Internal DNS & Certificates
-
-On the default domain there is **nothing external to manage** — Microsoft owns `msappproxy.net`, its DNS, and its edge TLS cert. You only configure the **internal** side.
-
-### Internal DNS
-
-| Record | Resolves to | Used by |
-|--------|-------------|---------|
-| `*.cargas.internal` | The app VM's internal IP | Connector + internal/VPN users |
-
-- [ ] Request internal DNS: wildcard `*.cargas.internal` → app VM IP (or per-app A records)
-- Internal/VPN users can hit `https://<app>.cargas.internal` directly (bypassing App Proxy); App Proxy pre-auth applies only to the external path
-
-### Backend TLS (connector → Traefik)
-
-The connector talks to Traefik over the internal URL. Two pragmatic options:
-
-- **Bootstrap-simple:** set the App Proxy **Internal URL to `http://<app>.cargas.internal`** and let Traefik serve the backend over HTTP. The connector→VM hop stays inside the corporate network. Avoids all cert work to start. (App Proxy edge is still HTTPS to the user.)
-- **Hardened:** serve HTTPS on Traefik with an **internal-CA** cert for `*.cargas.internal`, and install the internal CA root on the connector VM so backend validation passes.
-
-Start bootstrap-simple; move to hardened before any sensitive-data app goes live.
+> **Verify against current Microsoft docs:** the backend request timeout (historically ~85s, extendable to ~180s via "Long") — the reason streaming/long-poll workloads don't belong here.
 
 ---
 
-## 4. Traefik v3 (Reverse Proxy)
+## 3. Port Assignment
 
-Traefik is the internal front door behind the connector. It auto-discovers Docker containers via labels and routes on `*.cargas.internal` — no config editing when deploying new apps.
+With no reverse proxy or DNS, the one thing you must manage centrally is **which app owns which host port**. Keep a simple registry (this note, or a file in an ops repo).
 
-### Docker Compose — Traefik
+| App | Host port | Identity? | App Proxy external URL |
+|-----|-----------|-----------|------------------------|
+| hello | 3001 | no | `hello-cargas.msappproxy.net` |
+| noco-tracker | 3002 | yes (oauth2-proxy) | `noco-tracker-cargas.msappproxy.net` |
+| _next app_ | 3003 | … | … |
 
-```yaml
-# /data/traefik/docker-compose.yml
-services:
-  traefik:
-    image: traefik:v3.0
-    container_name: traefik
-    restart: unless-stopped
-    command:
-      - "--api.dashboard=true"
-      - "--providers.docker=true"
-      - "--providers.docker.exposedByDefault=false"
-      - "--providers.file.directory=/etc/traefik/dynamic"
-      - "--entrypoints.web.address=:80"
-      - "--entrypoints.websecure.address=:443"
-      - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
-      - "--entrypoints.websecure.http.tls=true"
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ./config/dynamic:/etc/traefik/dynamic:ro
-      - ./certs:/certs:ro
-    networks:
-      - proxy
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.dashboard.rule=Host(`traefik.cargas.internal`)"
-      - "traefik.http.routers.dashboard.service=api@internal"
-      # Protect the dashboard: publish it via its own App Proxy app, or keep it VPN-only
-networks:
-  proxy:
-    name: proxy
-    external: true
-```
-
-> If you go **bootstrap-simple (HTTP backend)**, drop the file provider / certs volume and the `tls=true` redirect, and serve the apps on the `web` entrypoint. Re-add TLS when you harden.
-
-### Key Points
-- `exposedByDefault: false` — containers must opt in with `traefik.enable=true`
-- Docker socket mounted read-only — Traefik watches for container start/stop
-- All apps share the `proxy` network
-- App routing rules use `Host(`<app>.cargas.internal`)` (see [[Publishing Guide]])
-
-### Create the network first
-```bash
-docker network create proxy
-```
+Conventions:
+- Reserve **3001–3099** for apps; open that range on the VM from the connector only
+- One host port per publication (the port App Proxy's Internal URL targets)
+- For an **identity app**, the registered port is the **oauth2-proxy** port; the app container itself is not host-published
 
 ---
 
-## 5. oauth2-proxy (Optional — identity for apps that need it)
+## 4. oauth2-proxy (Per-App — only for apps that need identity)
 
-Skip this entirely for pilots that only need "authenticated employee" access — App Proxy pre-auth already gates them. Add it when an app must know **who** the user is or authorize **by group**.
+Skip entirely for pre-auth-only pilots. For an app that must know the user, run oauth2-proxy **in reverse-proxy mode** in the app's own compose stack: App Proxy → oauth2-proxy port → app.
 
-### The default-domain redirect wrinkle
+### Entra App Registration (one, reused across apps)
 
-Because the external host (`<app>-cargas.msappproxy.net`) differs from the internal host (`<app>.cargas.internal`), oauth2-proxy must build its sign-in redirect against the **external** URL or the round-trip to Entra breaks. Practical handling:
-
-- **Single pilot app:** run one oauth2-proxy and pin `OAUTH2_PROXY_REDIRECT_URL=https://<app>-cargas.msappproxy.net/oauth2/callback`. Register that exact URI in the oauth2-proxy app registration. Set a **host-only cookie** (leave `OAUTH2_PROXY_COOKIE_DOMAINS` unset). This definitely works.
-- **Several apps needing identity:** a single shared oauth2-proxy can't carry a different static redirect per app. Either validate that App Proxy forwards `X-Forwarded-Host` (then derive per-app) — or take it as the signal to [graduate to a custom domain](#graduation-graduating-to-a-custom-domain), where one shared `*.apps.cargas.com` cookie + redirect serves every app cleanly.
-
-### Entra App Registration (for oauth2-proxy, separate from the App Proxy app)
-- [ ] Register an app for oauth2-proxy; redirect URI = `https://<app>-cargas.msappproxy.net/oauth2/callback`
+- [ ] Register a single app for oauth2-proxy
+- [ ] Add a **redirect URI per identity app**: `https://<app>-cargas.msappproxy.net/oauth2/callback`
 - [ ] Enable ID tokens; configure **group claims**
-- [ ] Note Client ID, Client Secret, Tenant ID
+- [ ] Note Client ID, Client Secret, Tenant ID (shared via each stack's env)
 
-### Docker Compose — oauth2-proxy (single-app pattern)
+### Compose snippet (added to an identity app's stack)
+
 ```yaml
   oauth2-proxy:
     image: quay.io/oauth2-proxy/oauth2-proxy:latest
-    container_name: oauth2-proxy
     restart: unless-stopped
     environment:
       OAUTH2_PROXY_PROVIDER: oidc
@@ -249,29 +179,27 @@ Because the external host (`<app>-cargas.msappproxy.net`) differs from the inter
       OAUTH2_PROXY_CLIENT_ID: ${CLIENT_ID}
       OAUTH2_PROXY_CLIENT_SECRET: ${CLIENT_SECRET}
       OAUTH2_PROXY_COOKIE_SECRET: ${COOKIE_SECRET}
-      # Host-only cookie on the default domain — do NOT set a .msappproxy.net cookie domain
-      OAUTH2_PROXY_COOKIE_SECURE: "true"
+      OAUTH2_PROXY_COOKIE_SECURE: "true"          # browser is on https (App Proxy edge)
       OAUTH2_PROXY_EMAIL_DOMAINS: cargas.com
-      OAUTH2_PROXY_REDIRECT_URL: https://APP-cargas.msappproxy.net/oauth2/callback
-      OAUTH2_PROXY_SET_XAUTHREQUEST: "true"
+      # Per-app redirect — host-only cookie (do NOT set a .msappproxy.net cookie domain)
+      OAUTH2_PROXY_REDIRECT_URL: https://noco-tracker-cargas.msappproxy.net/oauth2/callback
+      OAUTH2_PROXY_UPSTREAMS: http://app:3000     # proxies to the app container
+      OAUTH2_PROXY_PASS_USER_HEADERS: "true"      # injects X-Forwarded-User/Email/Groups to the app
       OAUTH2_PROXY_REVERSE_PROXY: "true"
       OAUTH2_PROXY_HTTP_ADDRESS: 0.0.0.0:4180
-    networks:
-      - proxy
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.middlewares.oauth.forwardAuth.address=http://oauth2-proxy:4180/oauth2/auth"
-      - "traefik.http.middlewares.oauth.forwardAuth.trustForwardHeader=true"
-      - "traefik.http.middlewares.oauth.forwardAuth.authResponseHeaders=X-Forwarded-User,X-Forwarded-Groups,X-Forwarded-Email"
+    ports:
+      - "3002:4180"      # App Proxy Internal URL = http://<vm-ip>:3002
+    networks: [vibe]
+    depends_on: [app]
 ```
 
-Apps behind oauth2-proxy read `X-Forwarded-User` / `X-Forwarded-Groups` (unchanged App Contract). The forwardAuth route must also be reachable at the external host — another reason this is cleaner under a shared custom domain.
+The app container stays **un-published** (no `ports:`) — only oauth2-proxy reaches it over the `vibe` network. The app reads `X-Forwarded-*` exactly as in the App Contract.
 
 ---
 
-## 6. Shared PostgreSQL
+## 5. Shared PostgreSQL
 
-One Postgres instance, one database per app, one role per app. (Internal only — never published.)
+One Postgres instance, one database + role per app. Internal only — never published.
 
 ```yaml
 # /data/postgres/docker-compose.yml
@@ -284,9 +212,11 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_ADMIN_PASSWORD}
     volumes:
       - /data/postgres/data:/var/lib/postgresql/data
-    networks:
-      - proxy
-    # Apps connect via Docker network: postgres://appuser:pass@postgres:5432/db_appname
+    networks: [vibe]
+    # No host port — apps reach it via the vibe network: postgres://appuser:pass@postgres:5432/db_app
+networks:
+  vibe:
+    external: true
 ```
 
 ### Per-App Database Provisioning
@@ -299,68 +229,63 @@ REVOKE ALL ON DATABASE postgres FROM appname_user;
 
 ### Backups
 ```bash
-# /data/postgres/backup.sh — run via cron daily
+# /data/postgres/backup.sh — daily cron
 #!/bin/bash
 BACKUP_DIR="/data/postgres/backups"
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
 docker exec postgres pg_dumpall -U postgres > "$BACKUP_DIR/full_$TIMESTAMP.sql"
 find "$BACKUP_DIR" -name "*.sql" -mtime +30 -delete
-# Optional: az storage blob upload-batch --source "$BACKUP_DIR" --destination backups
 ```
 - [ ] Cron: `0 2 * * * /data/postgres/backup.sh`
-- [ ] Configure Azure Blob Storage for off-VM copies
+- [ ] Azure Blob Storage for off-VM copies
 
 ---
 
-## 7. Environment File
+## 6. Environment File
 
 ```bash
-# /data/.env
+# /data/.env   (oauth2-proxy vars only needed for identity apps)
 TENANT_ID=your-entra-tenant-id
-CLIENT_ID=oauth2-proxy-app-registration-client-id      # only if using oauth2-proxy
+CLIENT_ID=oauth2-proxy-app-registration-client-id
 CLIENT_SECRET=oauth2-proxy-app-registration-client-secret
 COOKIE_SECRET=generated-base64-string
 POSTGRES_ADMIN_PASSWORD=strong-generated-password
 ```
 - [ ] `chmod 600 /data/.env`
-- [ ] Document secret rotation procedure
+- [ ] Document secret rotation
 
 ---
 
-## 8. Validation Checklist
+## 7. Validation Checklist
 
 ### App Proxy & Connector
 - [ ] Connector shows **Active** in Entra admin center
 - [ ] From an **external** network (off VPN), `https://hello-cargas.msappproxy.net` triggers Entra login
-- [ ] After login, the request reaches the VM (check Traefik access logs)
+- [ ] After login the request reaches the container (check container logs)
 - [ ] Only assigned users/groups can open the published app
 
-### Internal DNS
-- [ ] `*.cargas.internal` resolves to the VM from the connector VM and from a VPN client
+### Ports
+- [ ] Each app answers on its assigned `<vm-ip>:<port>` from the connector VM
+- [ ] App port range is closed to everything except the connector
 
-### Traefik
-- [ ] App reachable internally at `https://hello.cargas.internal` (or `http://` in bootstrap-simple)
-- [ ] Invalid internal hostnames return 404
-
-### Hello World App
-- [ ] Deploy the hello-world container (see [[Publishing Guide]])
-- [ ] Reachable externally via its msappproxy.net URL after publication
-- [ ] (If using oauth2-proxy) shows the authenticated user's email + groups from headers
+### Apps
+- [ ] Pre-auth-only app: reachable externally after publication; no identity headers expected
+- [ ] Identity app: oauth2-proxy port published; app shows the authenticated user's email + groups
 
 ### PostgreSQL
-- [ ] App connects via `DATABASE_URL` on the Docker network
+- [ ] App connects via `DATABASE_URL` on the `vibe` network
 - [ ] App role cannot access other app databases
-- [ ] Backup cron produces valid SQL dumps
+- [ ] Backup cron produces valid dumps
 
 ---
 
-## 9. Monitoring (Lightweight Start)
+## 8. Monitoring (Lightweight Start)
 
 - **App Proxy health** — connector status + published-app health in the Entra admin center
-- **Traefik dashboard** — active routes, health, metrics
 - **Docker health checks** — each app exposes `/healthz`; Docker restarts unhealthy containers
 - **Disk space alert** — cron emails if `/data` exceeds 75%
 - **Backup verification** — weekly manual check
+- **Port registry** — keep [Section 3](#3-port-assignment) current; it's the source of truth without a dashboard
 
 ---
 
@@ -368,13 +293,13 @@ POSTGRES_ADMIN_PASSWORD=strong-generated-password
 
 ```bash
 # On the app VM:
-docker network create proxy
-cd /data/traefik   && docker compose --env-file /data/.env up -d
-cd /data/postgres  && docker compose --env-file /data/.env up -d
-cd /data/apps/hello-world && docker compose up -d
+docker network create vibe
+cd /data/postgres        && docker compose --env-file /data/.env up -d
+cd /data/apps/hello      && docker compose up -d
+cd /data/apps/noco-tracker && docker compose --env-file /data/.env up -d
 
-# In Entra admin center (per app, one-time on the default domain):
-#   create the App Proxy publication: external <app>-cargas.msappproxy.net → internal <app>.cargas.internal
+# In Entra admin center (per app, one-time):
+#   publish: external <app>-cargas.msappproxy.net → internal http://<vm-ip>:<port>
 #   assign users/groups
 ```
 
@@ -382,39 +307,35 @@ cd /data/apps/hello-world && docker compose up -d
 
 ## Graduation: Graduating to a Custom Domain
 
-Move here when you have more than a few apps, want zero-touch deploys, or want clean URLs / shared SSO.
+Move here when you have more than a few apps, tire of managing ports/publications, or want clean URLs + shared SSO. This **reintroduces a reverse proxy (Traefik) and DNS**.
 
-| Capability | Default domain (now) | Custom domain (`*.apps.cargas.com`) |
-|------------|----------------------|-------------------------------------|
+| Capability | Now (default domain + ports) | Custom domain (`*.apps.cargas.com`) |
+|------------|------------------------------|-------------------------------------|
 | URL | `https://<app>-cargas.msappproxy.net` | `https://<app>.apps.cargas.com` |
-| New app | One App Proxy publication **per app** | **Wildcard** publication covers all — zero-touch |
-| TLS cert | Microsoft's (nothing to manage) | You provide a wildcard `*.apps.cargas.com` cert (edge + Traefik backend) |
-| DNS | None to manage | Public CNAME + internal **split-horizon** private zone → VM |
-| oauth2-proxy | Per-app redirect; host-only cookie; awkward across apps | One shared instance; cookie domain `.apps.cargas.com`; clean SSO across all apps |
-| Identity/SSO across apps | Re-establish per app | Shared session |
+| New app | New publication **+ pick a port** | **Wildcard** publication + Traefik label — zero-touch |
+| Routing | App Proxy → container port | Traefik routes by hostname |
+| TLS cert | Microsoft's (none to manage) | Wildcard `*.apps.cargas.com` (edge + Traefik) |
+| DNS | None | Public CNAME + internal split-horizon → VM |
+| Identity | Per-app oauth2-proxy | One shared oauth2-proxy; shared SSO across apps |
+| Port management | Manual registry | Gone — Traefik handles it |
 
-**The single-hostname principle:** with the custom domain, publish External URL and Internal URL on the **same** host (`*.apps.cargas.com`, internal resolved via split-horizon to the VM). No host translation → oauth2-proxy redirects and cookies "just work." That is the main technical reason the custom domain is the real answer at scale.
-
-Migration steps (when ready): verify the custom domain in Entra → obtain wildcard cert → publish the wildcard app → set up split-horizon DNS → switch Traefik routing rules to `*.apps.cargas.com` → consolidate to one shared oauth2-proxy → update [[Publishing Guide]] hostnames.
+**The single-hostname principle (at scale):** publish External and Internal URL on the **same** host (`*.apps.cargas.com`, internal resolved via split-horizon to the VM) so there's no host translation and oauth2-proxy redirects/cookies "just work." Migration: verify custom domain → wildcard cert → wildcard publication → split-horizon DNS → add Traefik routing → consolidate to one oauth2-proxy → update [[Publishing Guide]].
 
 ---
 
 ## Scope: APIs & MCP Servers
 
-App Proxy is built for **interactive, browser-based web apps**. It is a **poor fit** for:
+App Proxy is built for **interactive, browser-based web apps**. Poor fit for:
+- **APIs from non-browser clients** — pre-auth expects a browser login
+- **MCP servers (HTTP transport)** — long-lived/streaming vs. App Proxy's backend timeout; clients use OAuth device flow
+- **Webhook receivers** — senders POST with a signing secret, not an interactive login
 
-- **APIs called by non-browser clients** — pre-auth expects a browser login flow
-- **MCP servers (HTTP transport)** — long-lived/streaming connections collide with App Proxy's backend timeout; MCP clients use OAuth device flow, not browser SSO
-- **Webhook receivers** (Zendesk, JIRA) — senders POST with a signing secret, not an interactive login
-
-### Recommended path for these
-
-| Traffic | Exposure | Notes |
-|---------|----------|-------|
-| Web UIs | **App Proxy** | This guide |
-| APIs / MCP / webhooks | **Azure API Management** or **App Gateway + WAF** | First-class API/OAuth semantics, handles long-lived connections |
-| Service-to-service (both on this VM) | **Docker network** | Don't leave the VM at all |
-| Admin/debug (Traefik dashboard, Postgres) | **VPN-only** | Never publish |
+| Traffic | Exposure |
+|---------|----------|
+| Web UIs | **App Proxy** (this guide) |
+| APIs / MCP / webhooks | **Azure API Management** or **App Gateway + WAF** |
+| Service-to-service (same VM) | **Docker `vibe` network** |
+| Admin/debug (Postgres) | **VPN-only** |
 
 ---
 
