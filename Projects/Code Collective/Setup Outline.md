@@ -107,7 +107,7 @@ Criteria for good pilot projects:
 ## Phase 4: Socialization & Scale (Weeks 8-12)
 
 ### Make It Visible
-- [ ] App Hub at `cargas.internal` — landing page showing all deployed tools
+- [ ] App Hub — a published landing page listing all deployed tools and their links
 - [ ] Kim's "AI & Automation Marketplace" vision = the app hub
 - [ ] Kim's "Job Board" vision = the project pipeline board
 - [ ] Present pilot results at Employee Meeting or Tech Connect
