@@ -91,7 +91,9 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.my-app.rule=Host(`my-app.cargas.internal`)"
-      - "traefik.http.routers.my-app.middlewares=oauth@docker"
+      # Only add the oauth middleware if this app needs user/group identity headers
+      # (requires oauth2-proxy — see Server Setup Guide §5). Omit for pre-auth-only pilots.
+      # - "traefik.http.routers.my-app.middlewares=oauth@docker"
       - "traefik.http.services.my-app.loadbalancer.server.port=3000"
 
 networks:
