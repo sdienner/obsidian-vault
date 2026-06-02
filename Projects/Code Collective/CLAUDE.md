@@ -27,6 +27,7 @@ A company-wide initiative to formalize collaboration among Cargas engineers and 
 | 2025-05-15 | Presented initiative to leadership | Slidev presentation at `d:/repos/cargascodecollective` |
 | 2025-05-15 | Manager-approved dedicated time model | Prevents deprioritization vs. client work |
 | 2026-05-18 | Align with Enterprise Enablement | Fred's thread + Kim's response revealed perfect fit: EE = demand pipeline, CC = execution framework, Vibe Server = deployment platform |
+| 2026-06-02 | Vibe server uses Entra App Proxy for external access | Entra **P2 confirmed**. Apps publish at `*.apps.cargas.com` (no VPN, no public IP on VM). oauth2-proxy retained for identity headers. APIs/MCP need separate path (APIM/App Gateway) — see [[Server Setup Guide#Scope APIs & MCP Servers]] |
 
 ## Next Actions
 - [ ] Reply to Fred's Teams thread — connect Code Collective to his ask
