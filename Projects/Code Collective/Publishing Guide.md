@@ -173,7 +173,7 @@ git add -A && git commit -m "Initial app" && git push
 4. Pushes image to GitHub Container Registry
 5. SSHes to the VM and runs `docker compose pull && docker compose up -d`
 6. Traefik auto-discovers the new container
-7. App is live at `my-app.apps.cargas.com` — reachable externally with no new App Proxy publication (the wildcard publication covers it)
+7. App is live **internally** at `my-app.cargas.internal`. For external access, an admin creates a one-time App Proxy publication (external `my-app-cargas.msappproxy.net` → internal `my-app.cargas.internal`) and assigns users/groups — then it's reachable from anywhere
 
 ### Manual Deploy (fallback)
 
