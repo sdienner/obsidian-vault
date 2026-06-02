@@ -14,7 +14,7 @@ Code Collective isn't one thing — it's the execution layer in a three-part sys
 |-------|-------|----------|
 | **Enterprise Enablement** | Kim Ireland / Biz Ops | Demand pipeline — surfaces workflow pain points company-wide, centralized intake (Asana form), prioritized list |
 | **Code Collective** | Scott / Engineering | Execution framework — who builds, when, with what governance |
-| **Vibe Coding Server** | Scott / Infrastructure | Deployment platform — containerized hosting, SSO, CI/CD, `cargas.internal` |
+| **Vibe Coding Server** | Scott / Infrastructure | Deployment platform — container hosting, Entra App Proxy SSO, per-app publishing, CI/CD |
 
 Enterprise Enablement answers *what to build*. Code Collective answers *who builds it and when*. The Vibe Coding Server answers *where it runs and how it ships*.
 
