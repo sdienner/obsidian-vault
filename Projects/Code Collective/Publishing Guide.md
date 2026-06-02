@@ -225,7 +225,7 @@ For non-technical users who need a tool built.
    → When requester is satisfied, it's done
 ```
 
-> **Why "no VPN" matters here:** Fred's whole thesis is that these tools save people time and frustration. A tool that requires a VPN connection to open adds friction back. Because apps publish through App Proxy, the requester just clicks a link and signs in — same as any Microsoft 365 app.
+> **Why "no VPN" matters here:** Fred's whole thesis is that these tools save people time and frustration. A tool that requires a VPN connection to open adds friction back. Because apps publish through App Proxy, the requester just clicks a link and signs in — same as any Microsoft 365 app. (The `msappproxy.net` URL is functional but not pretty; a custom domain later gives clean `apps.cargas.com` URLs.)
 
 ### Quick Hits vs. Structured Projects
 
