@@ -6,9 +6,9 @@ status: active
 ---
 # Publishing Guide — Deploying Apps to the Vibe Coding Server
 
-How to build and deploy an app. Internally, apps route on `*.cargas.internal`. Externally, each app is published through Entra Application Proxy at `https://<app>-cargas.msappproxy.net` and is reachable from **any device with no VPN**, behind Entra ID single sign-on. Covers both the developer workflow and the sponsored development workflow for non-technical requests.
+How to build and deploy an app. Each app runs as a container on the VM, exposes a **host port**, and is published externally through Entra Application Proxy at `https://<app>-cargas.msappproxy.net` — reachable from **any device with no VPN**, behind Entra ID single sign-on. Covers both the developer workflow and the sponsored development workflow for non-technical requests.
 
-> **We're on App Proxy's default domain for now.** That means each app needs a one-time App Proxy publication (an admin step in Entra) and gets a `msappproxy.net` URL. See [[Server Setup Guide]] for the bootstrap-vs-custom-domain trade-off.
+> **Current setup: default domain + direct ports.** No reverse proxy, no internal DNS. App Proxy points straight at your container's port. Each app needs a one-time App Proxy publication (an admin step in Entra) and a port from the registry. See [[Server Setup Guide]] for the full architecture and the custom-domain graduation path.
 
 ---
 
@@ -21,35 +21,36 @@ Every app deployed to the vibe server must conform to this contract:
 | Requirement | Detail |
 |-------------|--------|
 | **Dockerfile** | Builds to a single container |
-| **HTTP port** | Listens on one port (default 3000, configurable) |
-| **Auth via headers** | Reads `X-Forwarded-User` and `X-Forwarded-Groups` — do NOT implement your own login |
+| **HTTP port** | Listens on one port (default 3000 in-container) |
+| **Host port** | Publishes a unique host port from the registry (e.g. `3001:3000`) — this is what App Proxy targets |
+| **Relative URLs** | Build links relative so they work behind the `msappproxy.net` hostname |
 | **Healthcheck** | Expose `GET /healthz` returning 200 when healthy |
 
 ### Optional
 
 | Feature | Detail |
 |---------|--------|
+| **Identity** | Need to know the user? Add an oauth2-proxy sidecar (below) and read `X-Forwarded-User` / `X-Forwarded-Groups` |
 | **Database** | Request a PostgreSQL database — you'll receive a `DATABASE_URL` env var |
 | **Fabric sync** | Opt in to sync your database to Microsoft Fabric for reporting |
 
 ### What you get for free
 
-- **SSO** — App Proxy pre-authenticates every external user with Entra ID before requests reach your app (no login code needed)
-- **HTTPS** — App Proxy terminates TLS at the edge; Traefik handles the internal hop
-- **Internal routing** — `appname.cargas.internal` just works via Docker labels
-- **External access** — reachable from anywhere (no VPN) behind Entra sign-in, once an admin creates the app's App Proxy publication (a one-time step per app while we're on the default `msappproxy.net` domain)
-- **Container restart** — Docker restarts your app on crash if healthcheck is configured
+- **SSO** — App Proxy pre-authenticates every external user with Entra ID before requests reach your app (no login code)
+- **HTTPS** — App Proxy terminates TLS at the edge
+- **External access** — reachable from anywhere (no VPN) behind Entra sign-in, once an admin publishes the app
+- **Container restart** — Docker restarts your app on crash if a healthcheck is configured
 
-> **Identity headers are not automatic on the default domain.** `X-Forwarded-User` / `X-Forwarded-Groups` only appear if your app is placed behind oauth2-proxy (see [[Server Setup Guide#5 oauth2-proxy Optional — identity for apps that need it]]). Pilots that only need "any authenticated employee" access don't need it. If your app needs to know *who* the user is, flag it when scoping.
+> **You manage two things per app:** a **host port** (from the [registry in the Server Setup Guide](Server%20Setup%20Guide.md)) and a **one-time App Proxy publication**. There's no auto-routing on the default domain.
 
 ---
 
 ## ⚠️ Your App Is Internet-Facing (Behind SSO)
 
-Once published, your app is reachable from the public internet at `https://<app>-cargas.msappproxy.net` — **after** Entra ID sign-in. No VPN required. That's the point: it's what makes these tools actually get used (a manager can glance at a dashboard from their phone). But it changes your responsibilities as an author:
+Once published, your app is reachable from the public internet at `https://<app>-cargas.msappproxy.net` — **after** Entra ID sign-in. No VPN. That's the point: it's what makes these tools get used (a manager can glance at a dashboard from their phone). But it changes your responsibilities:
 
-- **Authorize, don't trust the network.** *Anyone* you (or the admin) assign to the publication passes the SSO gate. There is no internal network boundary protecting the data behind it. If your tool should be limited to specific people, restrict the App Proxy publication's user/group assignment — and, if the app runs behind oauth2-proxy, also check `X-Forwarded-Groups` inside your app.
-- **Treat sensitive data accordingly.** Customer PII, financials, etc. warrant a stricter Conditional Access policy on the published app. Cargas has **Entra P2**, so risk-based Conditional Access (block risky sign-ins, require MFA/compliant device) is available — request it for sensitive apps when you scope the project.
+- **Authorize, don't trust the network.** Anyone assigned to the publication passes the SSO gate; there is no internal-network boundary behind it. Restrict the publication's user/group assignment — and if the app runs behind oauth2-proxy, also check `X-Forwarded-Groups` in-app.
+- **Treat sensitive data accordingly.** PII/financials warrant a scoped Conditional Access policy. Cargas has **Entra P2**, so risk-based / MFA / device-compliance policies are available — request them when scoping a sensitive app.
 - **No secrets in the front end.** Assume the URL can be hit by any assigned, authenticated employee.
 
 ---
@@ -59,22 +60,18 @@ Once published, your app is reachable from the public internet at `https://<app>
 ### 1. Start from the template repo
 
 ```bash
-# Clone the app template
 gh repo create cargas-internal/my-app --template cargas-internal/vibe-app-template --private
 git clone git@github.com:cargas-internal/my-app.git
 cd my-app
 ```
 
-The template includes:
-- `Dockerfile` with sensible defaults
-- `docker-compose.yml` with Traefik labels pre-configured
-- `.github/workflows/deploy.yml` — CI/CD pipeline
-- `src/` — starter app (Node/Python/Go — pick your stack)
-- `README.md` — fill in what this app does
+The template includes a `Dockerfile`, a `docker-compose.yml` (port-mapped, with an optional oauth2-proxy block), `.github/workflows/deploy.yml`, starter `src/`, and a `README.md`.
 
-### 2. Configure your app identity
+### 2. Pick a port and configure the container
 
-Edit `docker-compose.yml` — replace `APP_NAME` with your app's subdomain:
+Claim the next free host port from the registry in [[Server Setup Guide]] (§ Port Assignment).
+
+**Pre-auth-only app** (most pilots — every authenticated employee may use it):
 
 ```yaml
 services:
@@ -84,38 +81,65 @@ services:
     restart: unless-stopped
     environment:
       - PORT=3000
-      # If you need a database, uncomment:
       # - DATABASE_URL=postgres://my_app_user:password@postgres:5432/db_my_app
-    networks:
-      - proxy
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.my-app.rule=Host(`my-app.cargas.internal`)"
-      # Only add the oauth middleware if this app needs user/group identity headers
-      # (requires oauth2-proxy — see Server Setup Guide §5). Omit for pre-auth-only pilots.
-      # - "traefik.http.routers.my-app.middlewares=oauth@docker"
-      - "traefik.http.services.my-app.loadbalancer.server.port=3000"
-
+    ports:
+      - "3001:3000"        # host 3001 → container 3000; App Proxy Internal URL = http://<vm-ip>:3001
+    networks: [vibe]
 networks:
-  proxy:
+  vibe:
     external: true
 ```
 
-### 3. Read auth headers in your app
+**Identity app** (needs to know the user / authorize by group) — add an oauth2-proxy sidecar; App Proxy targets *its* port, and the app stays un-published:
 
-Your app receives the authenticated user's identity via headers. No auth library needed.
+```yaml
+services:
+  oauth2-proxy:
+    image: quay.io/oauth2-proxy/oauth2-proxy:latest
+    restart: unless-stopped
+    environment:
+      OAUTH2_PROXY_PROVIDER: oidc
+      OAUTH2_PROXY_OIDC_ISSUER_URL: https://login.microsoftonline.com/${TENANT_ID}/v2.0
+      OAUTH2_PROXY_CLIENT_ID: ${CLIENT_ID}
+      OAUTH2_PROXY_CLIENT_SECRET: ${CLIENT_SECRET}
+      OAUTH2_PROXY_COOKIE_SECRET: ${COOKIE_SECRET}
+      OAUTH2_PROXY_COOKIE_SECURE: "true"
+      OAUTH2_PROXY_EMAIL_DOMAINS: cargas.com
+      OAUTH2_PROXY_REDIRECT_URL: https://my-app-cargas.msappproxy.net/oauth2/callback
+      OAUTH2_PROXY_UPSTREAMS: http://app:3000
+      OAUTH2_PROXY_PASS_USER_HEADERS: "true"
+      OAUTH2_PROXY_REVERSE_PROXY: "true"
+      OAUTH2_PROXY_HTTP_ADDRESS: 0.0.0.0:4180
+    ports:
+      - "3002:4180"        # App Proxy Internal URL = http://<vm-ip>:3002
+    networks: [vibe]
+    depends_on: [app]
+  app:
+    build: .
+    container_name: my-app
+    restart: unless-stopped
+    environment:
+      - PORT=3000
+    networks: [vibe]       # NOT host-published — only oauth2-proxy reaches it
+networks:
+  vibe:
+    external: true
+```
 
-**Node/Express example:**
+> An admin must register `https://my-app-cargas.msappproxy.net/oauth2/callback` as a redirect URI on the shared oauth2-proxy app registration.
+
+### 3. Read auth headers (identity apps only)
+
 ```javascript
+// Node/Express — only populated when behind oauth2-proxy
 app.get("/", (req, res) => {
   const user = req.headers["x-forwarded-user"];
   const groups = (req.headers["x-forwarded-groups"] || "").split(",");
   res.json({ user, groups });
 });
 ```
-
-**Python/Flask example:**
 ```python
+# Python/Flask
 @app.route("/")
 def index():
     user = request.headers.get("X-Forwarded-User")
@@ -123,11 +147,9 @@ def index():
     return {"user": user, "groups": groups}
 ```
 
-> **Authorization pattern:** for anything beyond "all employees," gate on group membership. Example: `if "energy-implementation" not in groups: return 403`. The SSO gate proves *who* the user is; your app decides *what they can do*.
+> **Authorization pattern:** for anything beyond "all employees," gate on group membership, e.g. `if "energy-implementation" not in groups: return 403`.
 
 ### 4. Request a database (if needed)
-
-File a request (or run the provisioning script when it exists):
 
 ```sql
 -- Admin runs this on the shared Postgres instance
@@ -135,58 +157,42 @@ CREATE DATABASE db_my_app;
 CREATE ROLE my_app_user WITH LOGIN PASSWORD 'generated-password';
 GRANT ALL PRIVILEGES ON DATABASE db_my_app TO my_app_user;
 ```
-
-Add the `DATABASE_URL` to your app's environment in `docker-compose.yml`.
+Add the `DATABASE_URL` to your app's environment.
 
 ---
 
 ## Developer Workflow
 
 ### Local Development
-
 ```bash
-# Run locally with Docker
 docker compose up --build
-
-# Or run natively (faster iteration)
-cd src && npm run dev   # or python app.py, go run main.go, etc.
+# or run natively for faster iteration:
+cd src && npm run dev
 ```
-
-For local dev, mock the auth headers or set them manually:
+Mock identity headers locally:
 ```bash
 curl -H "X-Forwarded-User: you@cargas.com" http://localhost:3000
 ```
 
 ### Deploy
-
 ```bash
-# Push to GitHub
 git add -A && git commit -m "Initial app" && git push
-
-# GitHub Actions handles: build → scan → push to GHCR → deploy to VM
+# GitHub Actions: build → scan → push to GHCR → SSH to VM → docker compose up -d
 ```
 
 **What happens on push:**
-1. GitHub Actions builds the Docker image
+1. GitHub Actions builds the image
 2. Trivy scans for vulnerabilities
-3. Lints and runs tests
-4. Pushes image to GitHub Container Registry
-5. SSHes to the VM and runs `docker compose pull && docker compose up -d`
-6. Traefik auto-discovers the new container
-7. App is live **internally** at `my-app.cargas.internal`. For external access, an admin creates a one-time App Proxy publication (external `my-app-cargas.msappproxy.net` → internal `my-app.cargas.internal`) and assigns users/groups — then it's reachable from anywhere
+3. Lints / runs tests
+4. Pushes to GitHub Container Registry
+5. SSHes to the VM, `docker compose pull && up -d` on the app's assigned port
+6. Container is live on `<vm-ip>:<port>`
+7. For external access, an admin creates a one-time App Proxy publication (external `my-app-cargas.msappproxy.net` → internal `http://<vm-ip>:<port>`) and assigns users/groups — then it's reachable from anywhere
 
 ### Manual Deploy (fallback)
-
-If CI/CD isn't set up yet or for quick iteration:
-
 ```bash
-# SSH to VM
 ssh vibe-server
-
-# Navigate to app directory
 cd /data/apps/my-app
-
-# Pull latest and restart
 git pull
 docker compose up -d --build
 ```
@@ -197,12 +203,10 @@ docker compose up -d --build
 
 For non-technical users who need a tool built.
 
-### How it works
-
 ```
 1. Requester describes the problem
    → Enterprise Enablement intake form (Asana)
-   → or direct Teams message to Code Collective channel
+   → or direct Teams message to the Code Collective channel
 
 2. Request lands on the project board
    → Steering committee triages (or developer self-selects)
@@ -210,8 +214,7 @@ For non-technical users who need a tool built.
 
 3. Developer picks it up
    → Schedules during Code Collective dedicated time
-   → Builds from app template
-   → AI-assisted development for rapid scaffolding (optional)
+   → Builds from app template; claims a port; AI-assisted scaffolding (optional)
 
 4. Requester tests
    → Admin publishes the app; developer shares the URL: https://my-tool-cargas.msappproxy.net
@@ -220,57 +223,47 @@ For non-technical users who need a tool built.
    → Provides feedback
 
 5. Iterate and ship
-   → Developer refines based on feedback
-   → Each push auto-deploys
-   → When requester is satisfied, it's done
+   → Each push auto-deploys; when the requester is satisfied, it's done
 ```
 
-> **Why "no VPN" matters here:** Fred's whole thesis is that these tools save people time and frustration. A tool that requires a VPN connection to open adds friction back. Because apps publish through App Proxy, the requester just clicks a link and signs in — same as any Microsoft 365 app. (The `msappproxy.net` URL is functional but not pretty; a custom domain later gives clean `apps.cargas.com` URLs.)
+> **Why "no VPN" matters here:** Fred's thesis is that these tools save time and frustration. A tool that requires a VPN to open adds friction back. Through App Proxy the requester just clicks a link and signs in — like any Microsoft 365 app. (The `msappproxy.net` URL is functional but not pretty; a custom domain later gives clean `apps.cargas.com` URLs.)
 
 ### Quick Hits vs. Structured Projects
 
 | | Quick Hit | Structured Project |
 |-|-----------|-------------------|
 | **Time** | Under 2 hours | Multi-sprint |
-| **Governance** | Developer self-selects, no formal approval | Steering committee scopes and assigns |
-| **Template** | Start from vibe-app-template | Start from template + architecture discussion |
-| **Examples** | Jaiya's Zendesk/JIRA merge dashboard, simple lookup tools | Customer list site, fleet dashboard |
+| **Governance** | Developer self-selects | Steering committee scopes and assigns |
+| **Identity** | Usually pre-auth-only | Often needs oauth2-proxy + group checks |
+| **Examples** | Jaiya's Zendesk/JIRA merge dashboard, lookups | Customer list site, fleet dashboard |
 
 ---
 
 ## CI/CD Pipeline
 
-### GitHub Actions Workflow
-
 ```yaml
 # .github/workflows/deploy.yml
 name: Build and Deploy
-
 on:
   push:
     branches: [main]
-
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - name: Build Docker image
         run: docker build -t ghcr.io/cargas-internal/${{ github.event.repository.name }}:latest .
-
       - name: Security scan
         uses: aquasecurity/trivy-action@master
         with:
           image-ref: ghcr.io/cargas-internal/${{ github.event.repository.name }}:latest
           exit-code: 1
           severity: CRITICAL,HIGH
-
       - name: Push to GHCR
         run: |
           echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
           docker push ghcr.io/cargas-internal/${{ github.event.repository.name }}:latest
-
   deploy:
     needs: build
     runs-on: ubuntu-latest
@@ -287,7 +280,7 @@ jobs:
             docker compose up -d
 ```
 
-### Required GitHub Secrets
+### Required GitHub Secrets (set at the `cargas-internal` org level)
 
 | Secret | Value |
 |--------|-------|
@@ -295,55 +288,45 @@ jobs:
 | `VM_USER` | SSH user on VM |
 | `VM_SSH_KEY` | SSH private key for deployment |
 
-Set these at the GitHub org level (`cargas-internal`) so all app repos inherit them.
-
 ---
 
 ## App Lifecycle
 
 ### Deploying a new version
-Push to `main`. CI/CD handles everything.
+Push to `main`. CI/CD handles it.
 
 ### Rolling back
 ```bash
-# SSH to VM
 cd /data/apps/my-app
-# Pin to a previous image tag (if using versioned tags)
-docker compose pull
+docker compose pull        # pin a previous tag if versioned
 docker compose up -d
-# Or revert the git commit and push again
+# or revert the commit and push
 ```
 
 ### Decommissioning an app
 ```bash
-# Stop and remove the container
 cd /data/apps/my-app
 docker compose down
-
-# Remove the database (if applicable)
 docker exec postgres psql -U postgres -c "DROP DATABASE db_my_app;"
 docker exec postgres psql -U postgres -c "DROP ROLE my_app_user;"
-
-# Archive the repo on GitHub
-# Remove /data/apps/my-app from VM
 ```
-
-> **Remove the App Proxy publication too.** On the default domain each app has its own publication — delete the Enterprise Application in Entra when decommissioning, in addition to removing the container and database. (Under a future wildcard custom-domain setup this step goes away.)
+- [ ] Delete the **App Proxy publication** (Enterprise Application) in Entra
+- [ ] If an identity app, remove its redirect URI from the oauth2-proxy app registration
+- [ ] **Free the port** in the registry
+- [ ] Archive the GitHub repo
 
 ---
 
 ## Security Checklist for New Apps
 
-Before deploying any app, verify:
-
 - [ ] No hardcoded secrets (use environment variables)
-- [ ] Auth headers are read, not bypassed (no public endpoints with sensitive data)
-- [ ] **Access restricted** wherever the tool isn't meant for all employees — scope the App Proxy publication's user/group assignment, and (if behind oauth2-proxy) also check `X-Forwarded-Groups` in-app. Network location is NOT a control — apps are internet-reachable behind SSO
-- [ ] Sensitive-data apps: request a scoped Conditional Access policy (Entra P2 supports risk-based / MFA / device-compliance policies)
-- [ ] If using a database, parameterized queries only (no string concatenation in SQL)
-- [ ] Trivy scan passes (no CRITICAL/HIGH vulnerabilities in dependencies)
-- [ ] Healthcheck endpoint exists at `/healthz`
-- [ ] README describes what the app does and who requested it
+- [ ] **Access restricted** where the tool isn't for everyone — scope the publication's user/group assignment, and (if behind oauth2-proxy) check `X-Forwarded-Groups` in-app. Network location is NOT a control
+- [ ] Sensitive-data apps: request a scoped Conditional Access policy (Entra P2)
+- [ ] Parameterized SQL only (no string concatenation)
+- [ ] Trivy scan passes (no CRITICAL/HIGH)
+- [ ] Healthcheck endpoint at `/healthz`
+- [ ] Uses relative URLs (works behind the published hostname)
+- [ ] README states what the app does and who requested it
 
 ---
 
@@ -351,28 +334,23 @@ Before deploying any app, verify:
 
 ```
 vibe-app-template/
-├── .github/
-│   └── workflows/
-│       └── deploy.yml          # CI/CD pipeline
-├── src/
-│   └── ...                     # App source (pick your stack)
-├── Dockerfile                  # Multi-stage build
-├── docker-compose.yml          # Traefik labels pre-configured (*.cargas.internal)
-├── .env.example                # Document required env vars
-├── .dockerignore
-├── .gitignore
-└── README.md                   # Template: fill in app name, requester, purpose
+├── .github/workflows/deploy.yml   # CI/CD pipeline
+├── src/                           # App source (pick your stack)
+├── Dockerfile                     # Multi-stage build
+├── docker-compose.yml             # Port-mapped; optional oauth2-proxy block
+├── .env.example                   # Required env vars
+└── README.md                      # App name, requester, purpose, assigned port
 ```
 
-- [ ] Create `cargas-internal/vibe-app-template` repo on GitHub
-- [ ] Include starter apps for common stacks (Node, Python, Go)
-- [ ] Pre-configure Traefik labels, healthcheck, auth header reading
-- [ ] Include a sample group-authorization snippet so authors default to checking `X-Forwarded-Groups`
+- [ ] Create `cargas-internal/vibe-app-template` on GitHub
+- [ ] Starter apps for common stacks (Node, Python, Go)
+- [ ] Pre-fill the host-port mapping and a commented oauth2-proxy sidecar
+- [ ] Include a sample group-authorization snippet
 
 ---
 
 ## Related
 
-- [[Server Setup Guide]] — Infrastructure setup for the VM and App Proxy
+- [[Server Setup Guide]] — Infrastructure, App Proxy, port registry
 - [[Setup Outline]] — Full phased plan
 - [[Code Collective]] — Initiative overview
