@@ -338,7 +338,7 @@ Before deploying any app, verify:
 
 - [ ] No hardcoded secrets (use environment variables)
 - [ ] Auth headers are read, not bypassed (no public endpoints with sensitive data)
-- [ ] **Authorization by `X-Forwarded-Groups`** wherever the tool isn't meant for all employees — apps are internet-reachable behind SSO, so network location is NOT a control
+- [ ] **Access restricted** wherever the tool isn't meant for all employees — scope the App Proxy publication's user/group assignment, and (if behind oauth2-proxy) also check `X-Forwarded-Groups` in-app. Network location is NOT a control — apps are internet-reachable behind SSO
 - [ ] Sensitive-data apps: request a scoped Conditional Access policy (Entra P2 supports risk-based / MFA / device-compliance policies)
 - [ ] If using a database, parameterized queries only (no string concatenation in SQL)
 - [ ] Trivy scan passes (no CRITICAL/HIGH vulnerabilities in dependencies)
