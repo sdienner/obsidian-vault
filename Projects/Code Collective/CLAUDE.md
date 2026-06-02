@@ -28,7 +28,8 @@ A company-wide initiative to formalize collaboration among Cargas engineers and 
 | 2025-05-15 | Manager-approved dedicated time model | Prevents deprioritization vs. client work |
 | 2026-05-18 | Align with Enterprise Enablement | Fred's thread + Kim's response revealed perfect fit: EE = demand pipeline, CC = execution framework, Vibe Server = deployment platform |
 | 2026-06-02 | Vibe server uses Entra App Proxy for external access | Entra **P2 confirmed**. No VPN, no public IP on VM. APIs/MCP need separate path (APIM/App Gateway) — see [[Server Setup Guide#Scope APIs & MCP Servers]] |
-| 2026-06-02 | Start on App Proxy **default `msappproxy.net` domain** (bootstrap) | Fastest start: no custom domain/cert/DNS. Trade-off: per-app publication, ugly URLs, oauth2-proxy optional (use App Proxy pre-auth alone for pilots). Custom domain `*.apps.cargas.com` is the documented graduation path for wildcard/zero-touch + clean SSO — see [[Server Setup Guide#Graduation Graduating to a Custom Domain]] |
+| 2026-06-02 | Start on App Proxy **default `msappproxy.net` domain** (bootstrap) | Fastest start: no custom domain/cert/DNS. Trade-off: per-app publication, ugly URLs. Custom domain `*.apps.cargas.com` is the documented graduation path for wildcard/zero-touch + clean SSO — see [[Server Setup Guide#Graduation Graduating to a Custom Domain]] |
+| 2026-06-02 | Bootstrap routing = **direct container ports (Option A)** | No Traefik, no internal DNS. App Proxy publication per app → `http://<vm-ip>:<port>`. Pre-auth-only apps hit the container directly; identity apps use a per-app oauth2-proxy sidecar (reverse-proxy mode). Manual port registry. Reverse proxy + DNS return at custom-domain graduation. |
 
 ## Next Actions
 - [ ] Reply to Fred's Teams thread — connect Code Collective to his ask
