@@ -164,7 +164,8 @@ Criteria for good pilot projects:
 | Builds demand faster than capacity | Phase 4 after pilots prove the model; don't over-promise before steering committee is running |
 | Overlaps with Enterprise Enablement | Align early (Phase 1); complementary not competitive |
 | Tools get built and abandoned | Centralized repos, documentation standards, app contract, decommissioning process |
-| Security concerns with internal apps | Trivy scanning in CI/CD, Entra ID SSO, security review gate for sensitive data apps |
+| Security concerns with internet-facing apps | App Proxy Entra pre-auth + Conditional Access (P2), Trivy scanning in CI/CD, group-based authorization, security review gate for sensitive data |
+| Manual port/publication overhead (bootstrap) | Acceptable for a few pilots; keep the port registry current; graduate to custom domain (wildcard + Traefik) once past a handful of apps |
 
 ---
 
