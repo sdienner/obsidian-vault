@@ -90,7 +90,7 @@ services:
       - proxy
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.my-app.rule=Host(`my-app.apps.cargas.com`)"
+      - "traefik.http.routers.my-app.rule=Host(`my-app.cargas.internal`)"
       - "traefik.http.routers.my-app.middlewares=oauth@docker"
       - "traefik.http.services.my-app.loadbalancer.server.port=3000"
 
