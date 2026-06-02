@@ -500,5 +500,5 @@ App Proxy is built for **interactive, browser-based web apps**. It is a **poor f
 ## Related
 
 - [[Setup Outline]] — Full phased plan including organizational setup
-- [[Publishing Guide]] — How to create and deploy apps *(note: update example hostnames from `*.cargas.internal` to `*.apps.cargas.com` to match this guide)*
+- [[Publishing Guide]] — How to create and deploy apps
 - [[Code Collective]] — Initiative overview
