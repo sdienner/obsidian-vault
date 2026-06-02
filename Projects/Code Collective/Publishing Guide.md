@@ -6,7 +6,9 @@ status: active
 ---
 # Publishing Guide — Deploying Apps to the Vibe Coding Server
 
-How to build and deploy an app to `*.apps.cargas.com`. Once deployed, an app is reachable from **any device with no VPN**, behind Entra ID single sign-on (published via Application Proxy). Covers both the developer workflow and the sponsored development workflow for non-technical requests.
+How to build and deploy an app. Internally, apps route on `*.cargas.internal`. Externally, each app is published through Entra Application Proxy at `https://<app>-cargas.msappproxy.net` and is reachable from **any device with no VPN**, behind Entra ID single sign-on. Covers both the developer workflow and the sponsored development workflow for non-technical requests.
+
+> **We're on App Proxy's default domain for now.** That means each app needs a one-time App Proxy publication (an admin step in Entra) and gets a `msappproxy.net` URL. See [[Server Setup Guide]] for the bootstrap-vs-custom-domain trade-off.
 
 ---
 
