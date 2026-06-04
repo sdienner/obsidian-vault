@@ -76,7 +76,7 @@ Three layers; all three are needed, none replaces the others:
 - [ ] Add a per-issue "touches module?" flag to the per-batch plan grid (from the PR check); keep it batch-scoped, never cumulative
 
 ## Open Questions / Blockers
-- **Cross-channel dependency enforcement:** automatically detect when a base delta's non-payment code depends on a newer module object (call-graph analysis, hard), or record by convention in the package's `RequiresModule` and gate on it? Headline open question.
+- **Cross-channel dependency enforcement:** automatically detect when a base delta's non-payment code depends on a newer module object (call-graph analysis, hard), or record by convention in the package's `RequiresModuleFixes` (Jira keys) and gate on it? Headline open question.
 - **Web binary compatibility:** `CargasPay.dll` built at one version running against another version's core assemblies is "tested fairly well, not fully" — finish that testing before rollout.
 - **A-vs-B build approach:** lighter Contents-driven split (recommended) vs. fully symmetric partial-dacpac in the delta flow (cleaner, requires DacFx model-building in the TS CLI).
 
