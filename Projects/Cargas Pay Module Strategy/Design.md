@@ -83,19 +83,16 @@ Detection is mechanical: when building base `2025.10-C`, compute `diff(delta/202
 
 ## Tracking model
 
-1. **`ModuleContentHash` in the module `PackageInfo.json`.** Hash the module object set at build; if a rebuild matches the last published hash, skip publishing. Idempotent builds; never ship a byte-identical "new" module delta.
-2. **Base→module compatibility matrix** (human/deploy-facing). Extend the release-plan grid with a module column:
+A global base-delta × module-version matrix does **not** scale — ~12 monthly lines/year (×2 with betas), each accumulating 12+ delta letters, cumulative forever, is a dense structure for sparse data (mostly recording "nothing changed"). Replace it with **self-describing packages evaluated at deploy time** — no cumulative table.
 
-   | Base delta | Requires module ≥ |
-   |---|---|
-   | 2025.10-A | 2026.03 (unchanged) |
-   | 2025.10-B | 2026.03-A |
-   | 2025.10-C | 2026.03-A (unchanged) |
+1. **`ModuleContentHash` in the module `PackageInfo.json`.** Hash the module object set at build; if a rebuild matches the last published hash, skip publishing. Idempotent builds; the module line advances only on real change, so its own version history *is* the dedup record — "unchanged" is never stored, its absence is the information. (Per-package; scales.)
+2. **`RequiresModule` on the base delta's `PackageInfo.json`** — a sparse `{ moduleGuid: minVersion }` map (keyed by GUID, so it generalizes to the MFP module). The deploy agent reads it (it already parses `PackageInfo`, `Deploy.cs:780`) and gates against the site's `cModule`. The dependency travels *with* the artifact; nothing external to keep in sync; O(1) per deploy.
+   - **Auto-derived for the common case:** when a delta's `diff ∩ module.json` is non-empty, its payment fixes ship as module revision `2026.03-A`, and the base delta is auto-stamped `RequiresModule: {cargaspay: 2026.03-A}` — i.e. "module sites: the payment fixes I skip on you live in 2026.03-A; be at ≥ that." Pure dual-ship coordination, no human input.
+   - **Manual bump for the rare hard case:** a base *non-payment* object that genuinely depends on a newer module object (e.g. a base proc calling a Cargas Pay proc with a parameter added in `2026.03-B`) raises the floor — asserted per-delta when known (commit trailer / release-planning input), not by filling a grid.
+3. **Module-downgrade guard** in the deploy gate — compare incoming module vs. installed `cModule.versionNumber`, block if older. (Per-deploy; scales.)
 
-3. **Module-downgrade guard** in the deploy gate — compare incoming module vs. installed `cModule.versionNumber`, block if older.
-
-### The matrix is a correctness artifact, not just dedup
-Because the base delta skips payments on module sites, a base delta's *non-payment* code can quietly depend on a payment object that only exists in a newer module revision (e.g. a base proc calling a Cargas Pay proc with a parameter added in `2026.03-B`). A site on `2026.03-A` applies the base delta (payments skipped) and breaks — the dependency crossed the channel boundary and nothing enforced ordering. The matrix's "requires module ≥" column is where that ordering gets recorded and gated.
+### Why self-describing beats a matrix
+At deploy time the agent already knows the site's base version (`cDeployment`), module version (`cModule`), and the incoming package's declared needs (`PackageInfo`). If every package declares its own constraints, no global cross-reference is ever needed — the evaluation is local and O(1), independent of how many releases or delta letters exist. The cross-channel dependency (a base delta skips payments on module sites, so its non-payment code can depend on a payment object only present in a newer module revision) is captured by `RequiresModule` on the package itself, where it's enforced against live site state. The only human-facing artifact left is the existing **per-release-batch** plan grid (issues × versions), which gains a per-issue "touches module?" flag from the PR check — bounded to the batch, never cumulative.
 
 ## Versioning findings (does the code support revisions today?)
 

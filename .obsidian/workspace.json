@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Projects/Code Collective/Server Setup Guide.md",
+                "file": "Projects/Cargas Pay Module Strategy/Design.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Server Setup Guide"
+              "title": "Design"
             }
           }
         ]
@@ -185,6 +185,9 @@
   },
   "active": "8ba08942f80bd4a3",
   "lastOpenFiles": [
+    "Projects/Code Collective/Server Setup Guide.md",
+    "Projects/Cargas Pay Module Strategy/Design.md",
+    "Projects/Cargas Pay Module Strategy/Design.md.tmp.23948.4ee8dafbda8b",
     "Projects/Cargas Pay Module Strategy/CLAUDE.md",
     "Projects/Cargas Pay Module Strategy",
     "Projects/Code Collective/Code Collective.md.tmp.60136.b623e4fda473",
@@ -195,9 +198,7 @@
     "Projects/Code Collective/Setup Outline.md.tmp.60136.a461e912a548",
     "Projects/Code Collective/Setup Outline.md.tmp.60136.f1b21cd2ba1c",
     "Projects/Code Collective/Setup Outline.md.tmp.60136.07184a58434b",
-    "Projects/Code Collective/CLAUDE.md.tmp.60136.a8b22d88fd17",
     "Projects/Engineering Team Leads/Engineering Team Leads.md",
-    "Projects/Code Collective/Server Setup Guide.md",
     "Projects/Code Collective/Publishing Guide.md",
     "Projects/Code Collective/Setup Outline.md",
     "Meetings/2026-05-26 Code Collective Steering Committee.md",
@@ -219,7 +220,6 @@
     "Reviews/Tom G - H2 2025 Performance Review.md",
     "ai site plan.md",
     "Projects/MFP CE Module/CLAUDE.md",
-    "Daily/2026-04-17.md",
-    "Daily/2026-04-14.md"
+    "Daily/2026-04-17.md"
   ]
 }
