@@ -56,7 +56,8 @@
       "Bash(Select-Object -Last 20)",
       "Bash(Format-Table -AutoSize)",
       "mcp__plugin_workiq_workiq__ask_work_iq",
-      "Bash(npx -y @anthropic-ai/workiq ask -q \"summarize recent messages in the product engineering channel\")"
+      "Bash(npx -y @anthropic-ai/workiq ask -q \"summarize recent messages in the product engineering channel\")",
+      "Bash([ -f \"Projects/$p/CLAUDE.md\" ])"
     ]
   }
 }
