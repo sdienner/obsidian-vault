@@ -50,6 +50,7 @@ Three layers; all three are needed, none replaces the others:
 | 2026-06-04 | Payment fix for module sites ships as `DeploymentType: 3` (Module), not a type-2 delta | Type-2 delta gate keys off base version and would reject a module-versioned delta; partial-dacpac semantics are what we want anyway |
 | 2026-06-04 | Module revisions use letter suffix (`2026.03-A`), not three-dot (`2026.03.1`) | `string.Compare` mis-orders multi-digit numeric segments (.2 vs .10); letters sort correctly under the existing comparator |
 | 2026-06-04 | Module-boundary PR check starts advisory, tightens to blocking later | Mixing isn't always wrong; hard-block day one breeds override-fatigue. Make accidental mixing impossible, not all mixing |
+| 2026-06-04 | Drop the cumulative compatibility matrix; use self-describing packages (`RequiresModule` in `PackageInfo`) gated at deploy | A dense matrix (~24 lines/yr × 12+ letters, cumulative) doesn't scale; per-package metadata is sparse and O(1) to evaluate against live site state |
 
 ## Next Actions
 
