@@ -68,8 +68,10 @@ Three layers; all three are needed, none replaces the others:
 - [ ] Add module-downgrade guard: **read** `cModule.versionNumber` and block an older incoming module (it is write-only today)
 - [ ] Replace ad-hoc `string.Compare` version checks with a real version comparator (helps base channel too)
 
-### Tracking
-- [ ] Add a "requires module ≥" column to the release-plan grid (base delta → required module version); doubles as the cross-channel dependency contract
+### Tracking (no global matrix — packages are self-describing)
+- [ ] Add `RequiresModule` (`{ moduleGuid: minVersion }`) to base-delta `PackageInfo.json`; auto-derive from the dual-ship pairing, allow a manual bump for hard cross-deps
+- [ ] Deploy agent reads `RequiresModule` and gates against `cModule` at deploy time (O(1) per deploy)
+- [ ] Add a per-issue "touches module?" flag to the per-release-batch plan grid (from the PR check); keep it batch-scoped, never cumulative
 
 ## Open Questions / Blockers
 - **Cross-channel dependency enforcement:** automatically detect when a base delta's non-payment code depends on a newer module object (call-graph analysis, hard), or record by convention in the matrix and gate on it? Headline open question.
