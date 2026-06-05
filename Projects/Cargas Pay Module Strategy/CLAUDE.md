@@ -68,6 +68,7 @@ Three layers; all three are needed, none replaces the others:
 ### Deploy-time (enforce)
 - [ ] Deploy agent: on a module site (cModule present), skip `update.module.sql` and payment web files from a base delta
 - [ ] Add module-downgrade guard: **read** `cModule.versionNumber` and block an older incoming module (it is write-only today)
+- [ ] Add **band/compatibility gate**: module declares `MinBaseVersion`; block a module deploy when site base < floor. NOTE: the current `module ≥ base` gate (`Deploy.cs:838`) *permits* the forbidden case (module 2026.04 on base 2025.10)
 - [ ] Replace ad-hoc `string.Compare` version checks with a real version comparator (helps base channel too)
 
 ### Tracking (no global matrix — packages self-describe by fix identity)
