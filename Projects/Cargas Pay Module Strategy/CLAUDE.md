@@ -83,6 +83,8 @@ Three layers; all three are needed, none replaces the others:
 - **Cross-channel dependency enforcement:** automatically detect when a base delta's non-payment code depends on a newer module object (call-graph analysis, hard), or record by convention in the package's `RequiresModuleFixes` (Jira keys) and gate on it? Headline open question.
 - **Web binary compatibility:** `CargasPay.dll` built at one version running against another version's core assemblies is "tested fairly well, not fully" — finish that testing before rollout.
 - **A-vs-B build approach:** lighter Contents-driven split (recommended) vs. fully symmetric partial-dacpac in the delta flow (cleaner, requires DacFx model-building in the TS CLI).
+- **Confirm band boundaries (provisional, Scott double-checking):** module start 2025.08; band 1 = base 2025.08–2026.03 ↔ modules ≤2026.03; band 2 = modules ≥2026.04 require base ≥2026.04. Subject to change — design stays boundary-agnostic via `MinBaseVersion`.
+- **Confirm scope of "deltas only for latest module":** module deltas (assumed — maintain band heads) vs. a base-delta constraint? Different gate if the latter.
 
 ## Resources
 - **Module manifest:** `D:/repos/CargasEnergy/module.json`
