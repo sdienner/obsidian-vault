@@ -52,6 +52,8 @@ Three layers; all three are needed, none replaces the others:
 | 2026-06-04 | Module-boundary PR check starts advisory, tightens to blocking later | Mixing isn't always wrong; hard-block day one breeds override-fatigue. Make accidental mixing impossible, not all mixing |
 | 2026-06-04 | Drop the cumulative compatibility matrix; packages self-describe and are gated at deploy | A dense matrix (~24 lines/yr × 12+ letters, cumulative) doesn't scale; per-package metadata is sparse and O(1) to evaluate against live site state |
 | 2026-06-04 | Module is per-release-line; cross-channel dep keys off Jira fix identity, not a module version | Base and module versions are decoupled many-to-many, so a base delta serving heterogeneous module lines can't name one required version — a fix-set is line-agnostic |
+| 2026-06-05 | Base↔module is piecewise-decoupled via compatibility bands; module declares `MinBaseVersion`, deploy gate enforces site base ≥ floor | Modules ≥2026.04 require base ≥2026.04 (dependency boundary); floor is data on the package so it survives boundary changes. Current `module ≥ base` gate permits the forbidden case |
+| 2026-06-05 | Maintain only the head module per band ("latest module", a couple of exceptions) | Bounds payment-fix fan-out to # bands, not every adopted release line |
 
 ## Next Actions
 
