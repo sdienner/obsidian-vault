@@ -70,7 +70,7 @@ Example: base 2025.10 + module 2026.03. Two independent version lines, two chann
 
 Key points:
 - It's **one** base-delta artifact, not a separately-built "base-only" delta. Same zip applies payments on non-module sites and skips them on module sites — the build splits payment objects into `update.module.sql`; deploy decides per-site off `cModule`.
-- The payments package is `DeploymentType: 3` (Module), **not** a type-2 delta: the type-2 gate requires `newVersion.StartsWith(baseVersion)` (`Deploy.cs:822`), so a `2026.03`-named delta on a 2025.10 base is rejected. Type-3 uses the module gate (`module >= base`, `Deploy.cs:838`) and gives the drift-tolerant partial-dacpac semantics we want.
+- The payments package is `DeploymentType: 3` (Module), **not** a type-2 delta: the type-2 gate requires `newVersion.StartsWith(baseVersion)` (`Deploy.cs:822`), so a `2026.03`-named delta on a 2025.10 base is rejected. Type-3 uses the module gate (`module >= base`, `Deploy.cs:838`) and gives the drift-tolerant partial-dacpac semantics we want — but that gate is **insufficient and backwards** for compatibility bands; it must be augmented by a `MinBaseVersion` check (see [Compatibility bands](#compatibility-bands-base--module)).
 
 ## Cumulative deltas vs. the desired-state module property
 
