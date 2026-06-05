@@ -79,6 +79,27 @@ Base deltas are cumulative diffs. Module packages are **desired-state**: the par
 - There's only ever **one current module package** per module-version line; the latest supersedes all prior. A fresh module site can jump straight to the latest revision — no need to apply each letter in sequence.
 - "Payments unchanged between `-B` and `-C`" means the module package simply **isn't re-minted**. The module line advances only when payment content actually changes.
 
+## Compatibility bands (base ↔ module)
+
+The base↔module relationship is **not** fully decoupled — it is piecewise, bounded by dependency boundaries. Modules began at release **2025.08**. Current bands (**provisional — boundaries subject to change**):
+
+- **Band 1:** base **2025.08–2026.03** can run modules up through **2026.03**. The module still floats ahead of base *within* the band (e.g. base 2025.10 + module 2026.03 — the core "current payments on old base" case).
+- **Band 2:** modules **2026.04+** require base **2026.04+** — a dependency boundary introduced at 2026.04.
+
+So "module ahead of base" still holds *within* a band; the boundary caps how far, and crossing it requires base and module to move together.
+
+### Enforced as data, not code: `MinBaseVersion`
+Each module package declares a **`MinBaseVersion`** (its band floor) in `PackageInfo.json`; the deploy gate enforces **site base ≥ module `MinBaseVersion`**. Because boundaries change, this is data carried by the package — a new boundary just means new module builds stamp a higher floor; no code change.
+
+### The current gate is backwards for this
+The existing type-3 gate only checks **module ≥ base** (`Deploy.cs:838`). That *permits exactly the forbidden case*: module 2026.04 on base 2025.10 passes (`2026.04 ≥ 2025.10`) but must be blocked. So `MinBaseVersion` is a **correctness fix** to a gate that today allows incompatible installs — not just policy. (Same shape as the write-only `cModule`: the needed guard is absent, the present one points the wrong way.)
+
+### "Latest module only" → maintain one head per band
+Policy: ship module deltas only for the **latest module**, with a couple of exceptions. In band terms: maintain the **head module of each active band** (band 2 advances with current releases; band 1 stays at the 2026.03 head for sites that can't cross). This **bounds the payment-fix fan-out to the number of bands (a couple)** — not every adopted release line — simplifying the fan-out in the tracking model. Desired-state packages make "move to your band's head" latest-wins.
+
+### Band crossing is automatic via full release
+You can't jump base lines through deltas — crossing the 2026.04 boundary means taking a **full release**, which ships the matching module alongside (`Package.cs:123`). So taking base 2026.04 carries module 2026.04 and upgrades the band together. The boundary is only dangerous on a **standalone module install** — exactly what the `MinBaseVersion` gate catches.
+
 Detection is mechanical: when building base `2025.10-C`, compute `diff(delta/2025.10-B … delta/2025.10-C) ∩ module.json`. Empty → no module change this letter. Non-empty → mint the next module revision.
 
 ## Tracking model
