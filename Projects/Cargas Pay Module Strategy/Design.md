@@ -63,7 +63,7 @@ Example: base 2025.10 + module 2026.03. Two independent version lines, two chann
 
 | | Base delta (`2025.10-C`, type 2) | Module delta (`Cargas Pay 2026.03-A`, type 3) |
 |---|---|---|
-| Version line | base (2025.10-A,B,C…) | module (2026.03, -A, -B…) — **independent** |
+| Version line | base (2025.10-A,B,C…) | module (2026.03, -A, -B…) — **independent within its compatibility band** |
 | Payload | cumulative SQL diff + DLLs | desired-state partial dacpac |
 | On this module site | applies everything **except** the split-out payment portion (`update.module.sql` skipped because `cModule` shows Cargas Pay installed) | applies payment objects, bumps `cModule` |
 | On a non-module 2025.10 site | applies **everything including** payments | never offered |
