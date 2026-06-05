@@ -16,6 +16,7 @@ Define a release/deployment strategy for the Cargas Pay module so that module ch
 - **Target:** TBD — must land before module rollout passes a handful of sites
 
 Full technical design: [[Projects/Cargas Pay Module Strategy/Design]]
+Broad-audience explainer + FAQ: [[Projects/Cargas Pay Module Strategy/Delta and Module Release Process]]
 
 ## Goal Link
 **Supports:** [[2. Yearly Goals#Engineering Delivery]]
