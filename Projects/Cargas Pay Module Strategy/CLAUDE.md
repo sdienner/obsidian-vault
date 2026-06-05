@@ -74,7 +74,7 @@ Three layers; all three are needed, none replaces the others:
 ### Tracking (no global matrix — packages self-describe by fix identity)
 - [ ] Module packages advertise the payment fix-set they contain (`ContainsModuleFixes` — Jira keys from cherry-picks); record it on the site (`cModule`)
 - [ ] Base deltas declare `RequiresModuleFixes` (Jira keys) only for the rare hard cross-dep; deploy gate checks containment against the site's module fix-set (line-agnostic, O(1))
-- [ ] Fan out payment fixes across every adopted module line via the per-batch release grid (module dimension = target module versions), same shape as base-delta fan-out
+- [ ] Fan out payment fixes only to the **head module of each active band** ("latest module" policy — a couple of lines), via the per-batch release grid
 - [ ] Add a per-issue "touches module?" flag to the per-batch plan grid (from the PR check); keep it batch-scoped, never cumulative
 
 ## Open Questions / Blockers
