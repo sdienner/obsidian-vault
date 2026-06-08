@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Projects/Cargas Pay Module Strategy/Design.md",
+                "file": "Projects/Code Collective/Server Setup Guide.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Design"
+              "title": "Server Setup Guide"
             }
           }
         ]
@@ -185,6 +185,13 @@
   },
   "active": "8ba08942f80bd4a3",
   "lastOpenFiles": [
+    "Projects/Code Collective/Setup Outline.md",
+    "Projects/Cargas Pay Module Strategy/Delta and Module Release Process.md",
+    "Projects/Cargas Pay Module Strategy/CLAUDE.md",
+    "Projects/Cargas Pay Module Strategy/Design.md",
+    "Projects/Code Collective/Publishing Guide.md",
+    "People/Matt H.md",
+    "Projects/Cargas AI Platform/CLAUDE.md",
     "Projects/Cargas Pay Module Strategy/CLAUDE.md.tmp.34560.d308979d9870",
     "Projects/Cargas Pay Module Strategy/CLAUDE.md.tmp.34560.df2979a81e78",
     "Projects/Cargas Pay Module Strategy/CLAUDE.md.tmp.34560.ff6681716a8b",
@@ -195,15 +202,9 @@
     "Projects/Cargas Pay Module Strategy/CLAUDE.md.tmp.23948.870f676c08da",
     "Projects/Cargas Pay Module Strategy/CLAUDE.md.tmp.23948.274f6aa2cc8d",
     "Projects/Cargas Pay Module Strategy/CLAUDE.md.tmp.23948.88775d717221",
-    "Projects/Cargas Pay Module Strategy/Design.md.tmp.23948.890fa4d5921e",
     "Projects/Code Collective/Server Setup Guide.md",
-    "Projects/Cargas Pay Module Strategy/Design.md",
-    "Projects/Cargas Pay Module Strategy/CLAUDE.md",
     "Projects/Engineering Team Leads/Engineering Team Leads.md",
-    "Projects/Code Collective/Publishing Guide.md",
-    "Projects/Code Collective/Setup Outline.md",
     "Meetings/2026-05-26 Code Collective Steering Committee.md",
-    "Projects/Cargas AI Platform/CLAUDE.md",
     "Projects/AI Automation/AI Automation.md",
     "Projects/Code Collective/Code Collective.md",
     "Daily/2026-05-04.md",
@@ -219,7 +220,6 @@
     "People/Jonathan B.md",
     "Reviews/Jonathan B - H2 2025 Performance Review.md",
     "Reviews/Tom G - H2 2025 Performance Review.md",
-    "ai site plan.md",
-    "Projects/MFP CE Module/CLAUDE.md"
+    "ai site plan.md"
   ]
 }
