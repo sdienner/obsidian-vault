@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Projects/Code Collective/Server Setup Guide.md",
+                "file": "Projects/Cargas Pay Module Strategy/Delta and Module Release Process.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Server Setup Guide"
+              "title": "Delta and Module Release Process"
             }
           }
         ]
@@ -185,6 +185,8 @@
   },
   "active": "8ba08942f80bd4a3",
   "lastOpenFiles": [
+    "Projects/Code Collective/Server Setup Guide.md",
+    "Goals/3. Weekly Review.md.tmp.42240.963f10405b91",
     "Goals/3. Weekly Review.md.tmp.42240.66d17ce3b8cb",
     "Goals/3. Weekly Review.md.tmp.42240.1192432629ee",
     "Goals/3. Weekly Review.md.tmp.42240.617c29a64d34",
@@ -202,9 +204,6 @@
     "Projects/Cargas AI Platform/CLAUDE.md",
     "Projects/Cargas Pay Module Strategy/CLAUDE.md.tmp.34560.d308979d9870",
     "Projects/Cargas Pay Module Strategy/CLAUDE.md.tmp.34560.df2979a81e78",
-    "Projects/Cargas Pay Module Strategy/CLAUDE.md.tmp.34560.ff6681716a8b",
-    "Projects/Cargas Pay Module Strategy/CLAUDE.md.tmp.34560.08678b52a1e9",
-    "Projects/Code Collective/Server Setup Guide.md",
     "Projects/Engineering Team Leads/Engineering Team Leads.md",
     "Meetings/2026-05-26 Code Collective Steering Committee.md",
     "Projects/AI Automation/AI Automation.md",
