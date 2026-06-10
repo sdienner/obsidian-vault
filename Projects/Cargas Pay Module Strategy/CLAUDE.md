@@ -1,5 +1,6 @@
 ---
 date: 2026-06-04
+updated: 2026-06-10
 tags: [project, cargas-pay, modules, deltas, release-engineering]
 status: active
 ---
@@ -7,13 +8,15 @@ status: active
 # Project: Cargas Pay Module Strategy
 
 ## Overview
-Define a release/deployment strategy for the Cargas Pay module so that module changes and base (release/delta) changes can coexist on the same customer site without breaking each other. The trigger: the 2025.10 delta failed when the 2026.03 Cargas Pay module was applied, because the module had dropped a column the delta's SQL still referenced.
+Define the release/deployment strategy for the Cargas Pay module so module changes and base (release/delta) changes can coexist on customer sites. Trigger: the 2025.10 delta failed when the 2026.03 Cargas Pay module was applied (module had dropped a column the delta's SQL referenced). Caught internally — no customer affected; no module sites exist yet.
+
+**The module is intended for all customers** (corrected 2026-06-09 — earlier design assumed ~30% subset). Payments is the one domain with externally-forced change (gateways, PCI, tokenization vendors), so the module is mandatory payments-delivery infrastructure: evergreen payments on a slow-moving base.
 
 ## Status
-- **Phase:** Planning (design complete, implementation not started)
-- **Progress:** 10%
+- **Phase:** Planning (design complete and evaluated; implementation not started)
+- **Progress:** 15%
 - **Started:** 2026-06-04
-- **Target:** TBD — must land before module rollout passes a handful of sites
+- **Target:** TBD — safety preconditions must land before first production module install
 
 Full technical design: [[Projects/Cargas Pay Module Strategy/Design]]
 Broad-audience explainer + FAQ: [[Projects/Cargas Pay Module Strategy/Delta and Module Release Process]]
@@ -22,70 +25,68 @@ Broad-audience explainer + FAQ: [[Projects/Cargas Pay Module Strategy/Delta and 
 **Supports:** [[2. Yearly Goals#Engineering Delivery]]
 **Related:** [[Projects/MFP CE Module/CLAUDE]] (inherits this pattern), [[Projects/Deltas/CLAUDE]], [[Projects/Release Automation/CLAUDE]]
 
-## The Core Decision
-The answers gathered during design force the architecture — the "clean partition" is off the table:
+## The Architecture: clean partition, segmented by floor
 
-- Only ~30% of customers will run the module; the other ~70% get payments through base release/delta forever.
-- All payment objects stay together in the module (a complete, self-contained payment subsystem that can run on an old base).
-- Therefore payment objects live in **both** channels permanently. Drift is the steady state, not a defect.
+Payments have a **single owning channel** per site — no overlay, no per-site conditional deploy behavior:
 
-**Model: source-level overlay, deploy-time partition.** Objects exist in both channels in git, but on any given site exactly one channel owns them at deploy time:
+| Base line | Payments channel | Why safe |
+|-----------|------------------|----------|
+| **≥ 2025.08** (module-eligible) | **Module only** — deltas carry no payment objects | Collision structurally impossible: the delta never contains payments |
+| **< 2025.08** (module-ineligible) | Deltas, as today (legacy until upgraded) | No module can exist there — nothing to collide with |
 
-| Site type | Who owns payments at deploy time |
-|-----------|----------------------------------|
-| Non-module (~70%) | Base release/delta (unchanged) |
-| Module (~30%) | The module, completely — base deploys must leave payment objects alone |
+Partition is mechanical (`diff ∩ module.json`). Compatibility **bands** bound how far a module can run ahead of base (band 1: base 2025.08–2026.03 ↔ modules ≤2026.03; band 2: modules ≥2026.04 need base ≥2026.04); maintain **one module head per band**. What remains in the deploy agent is **gates only** — fail-safe checks, not conditional behaviors.
 
-## Approach — defense in depth
-Three layers; all three are needed, none replaces the others:
-
-1. **Prevent (PR-time):** a module-boundary GitHub Action in CargasEnergy that flags PRs touching both module and base objects — reusing the EnergyLicenses classifier. Advisory, not a correctness guarantee.
-2. **Separate (build-time):** the delta build partitions changed files against `module.json`; module-owned SQL goes to a separate `update.module.sql`; the module fix re-ships as a module package built from the delta branch.
-3. **Enforce (deploy-time):** the deploy agent skips the base delta's payment portion on module sites (one `cModule` lookup) and blocks module downgrades. This is the actual safety net.
+**2026-06-10 evaluation verdict:** merit high, tooling feasibility high, **rollout is the real project.** Top risks are payment-data migration under desired-state apply, residual cross-boundary SQL references, and campaign logistics — see risk register in [[Projects/Cargas Pay Module Strategy/Design]].
 
 ## Key Decisions
 | Date | Decision | Rationale |
 |------|----------|-----------|
-| 2026-06-04 | Overlay forever, not clean partition | 70% of customers need payments via base; module is a self-contained superset for the other 30% |
-| 2026-06-04 | Payments fix dual-ships: base delta (payments inline, skipped on module sites) + module delta | One base-delta artifact serves both populations via deploy-time skip |
-| 2026-06-04 | Payment fix for module sites ships as `DeploymentType: 3` (Module), not a type-2 delta | Type-2 delta gate keys off base version and would reject a module-versioned delta; partial-dacpac semantics are what we want anyway |
-| 2026-06-04 | Module revisions use letter suffix (`2026.03-A`), not three-dot (`2026.03.1`) | `string.Compare` mis-orders multi-digit numeric segments (.2 vs .10); letters sort correctly under the existing comparator |
-| 2026-06-04 | Module-boundary PR check starts advisory, tightens to blocking later | Mixing isn't always wrong; hard-block day one breeds override-fatigue. Make accidental mixing impossible, not all mixing |
-| 2026-06-04 | Drop the cumulative compatibility matrix; packages self-describe and are gated at deploy | A dense matrix (~24 lines/yr × 12+ letters, cumulative) doesn't scale; per-package metadata is sparse and O(1) to evaluate against live site state |
-| 2026-06-04 | Module is per-release-line; cross-channel dep keys off Jira fix identity, not a module version | Base and module versions are decoupled many-to-many, so a base delta serving heterogeneous module lines can't name one required version — a fix-set is line-agnostic |
-| 2026-06-05 | Base↔module is piecewise-decoupled via compatibility bands; module declares `MinBaseVersion`, deploy gate enforces site base ≥ floor | Modules ≥2026.04 require base ≥2026.04 (dependency boundary); floor is data on the package so it survives boundary changes. Current `module ≥ base` gate permits the forbidden case |
-| 2026-06-05 | Maintain only the head module per band ("latest module", a couple of exceptions) | Bounds payment-fix fan-out to # bands, not every adopted release line |
+| 2026-06-04 | ~~Overlay forever, not clean partition~~ **Superseded 2026-06-09** | Was based on 30%-subset assumption |
+| 2026-06-04 | ~~Dual-ship payment fixes; base delta skips payments on module sites~~ **Superseded 2026-06-10** | Replaced by segment-by-floor; skip machinery never gets built |
+| 2026-06-04 | Payment fix for module sites ships as `DeploymentType: 3` (Module), not a type-2 delta | Type-2 gate keys off base version and rejects module-versioned packages; partial-dacpac semantics are what we want |
+| 2026-06-04 | Module revisions use letter suffix (`2026.03-A`), not three-dot | Lexical `string.Compare` mis-orders numeric segments (.2 > .10); letters sort correctly and match delta convention |
+| 2026-06-04 | PR boundary check starts advisory, tightens later | Make accidental mixing impossible first; under partition it grows into routing enforcement |
+| 2026-06-04 | No global compatibility matrix; packages self-describe, gated at deploy | Matrix doesn't scale (~24 lines/yr × 12+ letters, cumulative); per-package metadata is O(1) vs live site state |
+| 2026-06-05 | Bands enforced via `MinBaseVersion` as package data | Boundaries change; floor-as-data survives that. Current `module ≥ base` gate permits the forbidden case |
+| 2026-06-05 | Maintain only the head module per band | Bounds payment-fix fan-out to # bands |
+| 2026-06-09 | **Module goes to all customers** | Evergreen-payments rationale applies to every payments customer |
+| 2026-06-10 | **Segment-by-floor:** lines ≥2025.08 ship payments module-only (deltas exclude them); lines <2025.08 keep payments in deltas (provably safe) | Trades hard correctness risk (breaking deploy) for soft coverage gap (unmigrated site waits for module); deletes the skip machinery |
+| 2026-06-10 | Fix-identity tracking (`RequiresModuleFixes`) demoted to escape hatch for residual cross-boundary references | Its main driver (dual-ship coordination) died with the overlay |
+| 2026-06-10 | Migration data-safety + campaign plan are **preconditions** to first production install | `BlockOnPossibleDataLoss=false` on financial data across multi-version jumps is the plan's scariest operation |
 
 ## Next Actions
 
-### Phase 0 — Prevent (cheap, do first)
-- [ ] Build module-boundary PR check as a GitHub Action in CargasEnergy (reuse `modulePatterns.server.ts` classifier from EnergyLicenses)
-- [ ] Decide where the classifier lives: call EnergyLicenses API (short-term) → shared package (long-term). Do **not** vendor a copy (can't see DB-backed overrides)
-- [ ] One-time audit: does `module.json`'s object set cover **every** payment object base ships? (self-containedness invariant)
+### Phase 0 — Decisions & data (this/next week, no code)
+- [ ] Pull customer population by base version from PhoneHome: size the sub-2025.08 tail, band 1, band 2. Sizes the campaign and the legacy-path lifetime
+- [ ] Ratify with team leads: payments module-only for lines ≥2025.08; band governance (new boundary = deliberate costed decision); urgent-fix policy (ad-hoc package as official escape hatch)
+- [ ] Identify how deploy agents get updated in the field; name an owner for agent-update sequencing
 
-### Build-time (separate)
-- [ ] In `cerelease patch`: partition the diff against `module.json` after the file list is computed; route module-owned SQL → `update.module.sql`, module-owned web/DLLs → separate staging
-- [ ] Add a module-delta build path: point the existing C# module packager at the delta branch, version it `<base>-<letter>` (e.g. `Cargas Pay 2026.03-A`)
-- [ ] Content-hash the module object set into the module `PackageInfo.json`; skip publishing if unchanged from the last module package
+### Phase 1 — Safety preconditions (gate the first production module install)
+- [ ] **Payment data migration design**: cumulative idempotent migration scripts in the module package valid from any eligible starting version; decide `BlockOnPossibleDataLoss` for type-3 deploys; require generated deploy reports on first N installs
+- [ ] Deploy gates in `Deploy.cs`: module-downgrade guard (read `cModule.versionNumber` — write-only today), `MinBaseVersion` band gate (current `module ≥ base` check permits the forbidden case), real version comparator
+- [ ] Module completeness audit: `module.json` covers every payment object base ships
+- [ ] DLL compatibility matrix: `CargasPay.dll` at module head vs older base assemblies, per band
 
-### Deploy-time (enforce)
-- [ ] Deploy agent: on a module site (cModule present), skip `update.module.sql` and payment web files from a base delta
-- [ ] Add module-downgrade guard: **read** `cModule.versionNumber` and block an older incoming module (it is write-only today)
-- [ ] Add **band/compatibility gate**: module declares `MinBaseVersion`; block a module deploy when site base < floor. NOTE: the current `module ≥ base` gate (`Deploy.cs:838`) *permits* the forbidden case (module 2026.04 on base 2025.10)
-- [ ] Replace ad-hoc `string.Compare` version checks with a real version comparator (helps base channel too)
+### Phase 2 — Build tooling
+- [ ] PR boundary check in CargasEnergy (advisory): path classification (reuse EL classifier — call EL API short-term, shared package later, never vendor) + content heuristic for base SQL referencing module object names + flags for module table changes and manifest drift
+- [ ] `cerelease patch`: exclude `module.json`-matched files from delta builds on lines ≥ floor (floor as config); detect module-content change per delta letter
+- [ ] Module-delta build path: thin CLI wrapper around `BuildModulePackage` (checkout delta branch → build web artifacts → package); stamp letter version + `MinBaseVersion` + `ModuleContentHash`; skip publish when hash unchanged
 
-### Tracking (no global matrix — packages self-describe by fix identity)
-- [ ] Module packages advertise the payment fix-set they contain (`ContainsModuleFixes` — Jira keys from cherry-picks); record it on the site (`cModule`)
-- [ ] Base deltas declare `RequiresModuleFixes` (Jira keys) only for the rare hard cross-dep; deploy gate checks containment against the site's module fix-set (line-agnostic, O(1))
-- [ ] Fan out payment fixes only to the **head module of each active band** ("latest module" policy — a couple of lines), via the per-batch release grid
-- [ ] Add a per-issue "touches module?" flag to the per-batch plan grid (from the PR check); keep it batch-scoped, never cumulative
+### Phase 3 — Pilot
+- [ ] Stand up automated module regression suite (one stable artifact shape — desired-state)
+- [ ] Pilot: updated agent + module install + subsequent base delta + subsequent module delta on internal/friendly sites; review deploy reports
+- [ ] Verify band gate and downgrade guard fire correctly (negative tests)
+
+### Phase 4 — Campaign
+- [ ] Migration campaign plan: scheduling, customer comms, adoption dashboard (EL already snapshots adoption nightly)
+- [ ] Flip PR check from advisory to required once the boundary is clean
+- [ ] Sunset plan for sub-2025.08 legacy payment-delta path
 
 ## Open Questions / Blockers
-- **Cross-channel dependency enforcement:** automatically detect when a base delta's non-payment code depends on a newer module object (call-graph analysis, hard), or record by convention in the package's `RequiresModuleFixes` (Jira keys) and gate on it? Headline open question.
-- **Web binary compatibility:** `CargasPay.dll` built at one version running against another version's core assemblies is "tested fairly well, not fully" — finish that testing before rollout.
-- **A-vs-B build approach:** lighter Contents-driven split (recommended) vs. fully symmetric partial-dacpac in the delta flow (cleaner, requires DacFx model-building in the TS CLI).
-- **Confirm band boundaries (provisional, Scott double-checking):** module start 2025.08; band 1 = base 2025.08–2026.03 ↔ modules ≤2026.03; band 2 = modules ≥2026.04 require base ≥2026.04. Subject to change — design stays boundary-agnostic via `MinBaseVersion`.
-- **Confirm scope of "deltas only for latest module":** module deltas (assumed — maintain band heads) vs. a base-delta constraint? Different gate if the latter.
+- **Payment data migration mechanics** — the headline precondition; needs a design of its own (Phase 1)
+- **Population shape** — sub-2025.08 tail size and band distribution (Phase 0 data pull) determines campaign length and legacy-path lifetime
+- **Band boundaries** — confirmed "good for now" (2025.08 floor; 2026.03/2026.04 split); design stays boundary-agnostic via `MinBaseVersion`
+- **Residual cross-boundary references** — base SQL referencing payment schema still rides deltas; detection (PR content heuristic) chosen over prevention; fix-identity gate held in reserve
 
 ## Resources
 - **Module manifest:** `D:/repos/CargasEnergy/module.json`
@@ -93,7 +94,8 @@ Three layers; all three are needed, none replaces the others:
 - **Deploy agent:** `D:/repos/ancillary-projects/Deploy/Deploy/Deploy.cs`
 - **Delta CLI:** `D:/repos/CEReleaseCLI/src/commands/{patch,create-delta}/index.ts`
 - **Existing module classifier (reactive):** `D:/repos/EnergyLicenses/app/utils/modulePatterns.server.ts`, `app/services/moduleAnalysis.server.ts`
+- **Adoption tracking:** EnergyLicenses nightly jobs (`.github/workflows/nightly_release_jobs.yml`)
 - **Delta build skill:** `.claude/skills/delta-builder/skill.md`
 
 ## Notes for Claude
-This project is the foundation MFP CE Module inherits — whatever pattern lands here sets the precedent. No customer sites run modules yet, so this is greenfield design, not incident cleanup; the 2025.10 failure was caught internally. The non-negotiable: the deploy agent must become module-aware regardless of how clean release planning gets — process discipline alone can't fix a DacFx full-compare or a flat `update.sql`. See [[Projects/Cargas Pay Module Strategy/Design]] for the code-level mechanics and file/line anchors.
+This project sets the pattern MFP CE Module inherits. No customer sites run modules yet — greenfield design, not incident cleanup. The architecture is settled (segment-by-floor clean partition; see Design.md revision note for the superseded overlay model). The work now divides into: tooling (weeks, low risk) and rollout (quarters, where the real risk lives — data migration, agent sequencing, campaign). Non-negotiables: deploy gates before any module install; data-migration story before the first production install; payments never ride deltas on module-eligible lines.
